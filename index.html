@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Jan Setu Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0a1628;--deep:#112240;--accent:#c8963e;--gold:#e8b04b;
+  --light:#f4f1eb;--white:#fff;--muted:#8892a4;--border:#e2ddd4;
+  --success:#27ae60;--danger:#e74c3c;--info:#2980b9;--warn:#f39c12;
+  --vote:#7c3aed;--vote-light:#ede9fe;
+  --r:12px;--shadow:0 4px 24px rgba(0,0,0,.09);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);min-height:100vh;overflow-x:hidden}
+
+/* ══ NAV ═══════════════════════════════════════════════════════════════ */
+nav{background:var(--navy);position:sticky;top:0;z-index:1000;box-shadow:0 2px 24px rgba(0,0,0,.4)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:68px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0}
+.nav-logo{width:40px;height:40px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.25rem;color:#fff;font-weight:900}
+.nav-brand-text{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;letter-spacing:.4px}
+.nav-brand-text span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:.1rem;list-style:none;flex:1;justify-content:center}
+.nav-links a,.nav-links button{
+  color:var(--muted);text-decoration:none;font-size:.83rem;font-weight:500;
+  padding:.45rem .75rem;border-radius:7px;transition:all .2s;border:none;
+  background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;
+}
+.nav-links a:hover,.nav-links button:hover{color:var(--gold);background:rgba(255,255,255,.07)}
+.nav-links a.active,.nav-links button.active{color:var(--gold);background:rgba(200,150,62,.1)}
+/* Vote pill in nav */
+.nav-vote-pill{
+  display:flex;align-items:center;gap:6px;background:rgba(124,58,237,.2);
+  border:1px solid rgba(124,58,237,.4);border-radius:50px;
+  color:#a78bfa!important;padding:.35rem .9rem!important;font-weight:700!important;
+}
+.nav-vote-pill:hover{background:rgba(124,58,237,.35)!important;color:#c4b5fd!important}
+.nav-actions{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.btn-file{background:var(--accent);color:#fff;border:none;padding:.5rem 1.2rem;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.btn-file:hover{background:var(--gold);transform:translateY(-1px);box-shadow:0 4px 14px rgba(200,150,62,.35)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:absolute;top:68px;left:0;right:0;background:var(--deep);padding:1rem;border-bottom:1px solid rgba(255,255,255,.08);animation:slideDown .25s ease;z-index:999}
+.mobile-menu.open{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.mobile-menu a,.mobile-menu button{display:block;width:100%;color:var(--muted);text-decoration:none;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;font-weight:500;transition:all .2s;border:none;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left}
+.mobile-menu a:hover,.mobile-menu button:hover{color:var(--gold);background:rgba(255,255,255,.06)}
+.mobile-menu .mb-vote{color:#a78bfa!important;background:rgba(124,58,237,.15)!important;border-radius:8px;margin-bottom:.3rem}
+.mobile-menu .mb-cta{margin-top:.5rem;background:var(--accent);color:#fff;display:block;text-align:center;border-radius:9px;padding:.8rem;font-weight:700}
+
+/* ══ PAGE SYSTEM ════════════════════════════════════════════════════════ */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ══ HERO ═══════════════════════════════════════════════════════════════ */
+.hero{background:var(--navy);padding:72px 1.5rem 56px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 65% 90% at 75% 50%,rgba(200,150,62,.13),transparent),radial-gradient(ellipse 40% 60% at 10% 90%,rgba(17,34,64,.8),transparent)}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:3rem;align-items:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,150,62,.15);border:1px solid rgba(200,150,62,.35);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:.4rem 1rem;border-radius:50px;margin-bottom:1.4rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.4rem);color:#fff;line-height:1.13;margin-bottom:1.1rem}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-sub{color:var(--muted);font-size:1rem;line-height:1.75;margin-bottom:1.8rem;max-width:480px}
+.hero-btns{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:2rem}
+.btn-hero-p{background:var(--accent);color:#fff;border:none;padding:.85rem 1.7rem;border-radius:var(--r);font-weight:700;font-size:.97rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-hero-p:hover{background:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,150,62,.35)}
+.btn-hero-s{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.25);padding:.85rem 1.7rem;border-radius:var(--r);font-weight:500;font-size:.97rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-hero-s:hover{border-color:var(--gold);color:var(--gold)}
+.btn-hero-vote{background:rgba(124,58,237,.25);color:#c4b5fd;border:1.5px solid rgba(124,58,237,.5);padding:.85rem 1.7rem;border-radius:var(--r);font-weight:700;font-size:.97rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-hero-vote:hover{background:rgba(124,58,237,.4);transform:translateY(-2px)}
+.hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.stat-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:1.3rem;text-align:center;backdrop-filter:blur(8px)}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold);font-weight:700}
+.stat-lbl{font-size:.78rem;color:var(--muted);font-weight:500;margin-top:4px}
+.steps-row{display:flex;gap:.9rem;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,.65);font-size:.82rem}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ══ COMMON ════════════════════════════════════════════════════════════ */
+.section{padding:56px 1.5rem}
+.container{max-width:1200px;margin:0 auto}
+.section-head{margin-bottom:1.8rem}
+.section-head h2{font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:.35rem}
+.section-head p{color:var(--muted);font-size:.95rem}
+.tag{display:inline-block;background:rgba(200,150,62,.12);color:var(--accent);font-size:.7rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;padding:.3rem .8rem;border-radius:50px;margin-bottom:.7rem}
+.vote-tag{background:rgba(124,58,237,.12);color:#7c3aed}
+
+/* ══ TABS ═══════════════════════════════════════════════════════════════ */
+.tabs-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.tab-bar{display:flex;background:var(--navy);overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex:1;min-width:120px;padding:.95rem .75rem;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;white-space:nowrap}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(200,150,62,.06)}
+.tab-pane{display:none;padding:2.2rem}
+.tab-pane.active{display:block;animation:fadeIn .3s ease}
+
+/* ══ FORM ═══════════════════════════════════════════════════════════════ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.fg{display:flex;flex-direction:column;gap:.35rem}
+.fg.full{grid-column:1/-1}
+label{font-size:.79rem;font-weight:700;color:#444;letter-spacing:.3px;text-transform:uppercase}
+input,select,textarea{padding:.72rem 1rem;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.93rem;color:var(--navy);background:#fafafa;transition:all .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(200,150,62,.13)}
+textarea{resize:vertical;min-height:100px;line-height:1.6}
+.char-bar{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.char-bar span{font-size:.76rem;color:var(--muted)}
+.char-progress{height:3px;background:var(--border);border-radius:2px;flex:1;margin:0 1rem}
+.char-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .2s}
+.file-drop{border:2px dashed var(--border);border-radius:9px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+.file-drop:hover,.file-drop.drag{border-color:var(--accent);background:rgba(200,150,62,.04)}
+.file-drop p{color:var(--muted);font-size:.88rem}
+.file-drop p span{color:var(--accent);font-weight:600}
+.fname-display{margin-top:.4rem;font-size:.83rem;color:var(--accent);font-weight:600}
+.form-actions{display:flex;gap:1rem;justify-content:flex-end;margin-top:1.6rem;flex-wrap:wrap}
+.btn-submit{background:var(--navy);color:#fff;border:none;padding:.82rem 2rem;border-radius:var(--r);font-weight:700;font-size:.97rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-submit:hover{background:var(--accent);transform:translateY(-2px)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-reset{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:.82rem 1.5rem;border-radius:var(--r);font-weight:500;font-size:.93rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-reset:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ══ TRACKER ════════════════════════════════════════════════════════════ */
+.track-wrap{max-width:540px;margin:0 auto;text-align:center}
+.track-wrap h3{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.5rem}
+.track-wrap>p{color:var(--muted);margin-bottom:1.4rem;font-size:.95rem}
+.track-row{display:flex;gap:.8rem}
+.track-row input{flex:1}
+.btn-track{background:var(--accent);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:9px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .2s;font-size:.93rem}
+.btn-track:hover{background:var(--gold)}
+.status-card{margin-top:1.4rem;background:var(--light);border-radius:var(--r);padding:1.7rem;text-align:left;display:none}
+.status-card.show{display:block;animation:fadeIn .3s ease}
+.sc-id{font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.3rem}
+.sc-title{font-weight:700;font-size:1rem;margin-bottom:.6rem}
+.sc-dept{font-size:.83rem;color:var(--muted);margin-bottom:.7rem}
+.badge{display:inline-block;padding:.28rem .9rem;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-pending{background:#fff3cd;color:#856404}
+.badge-assigned{background:#cce5ff;color:#004085}
+.badge-in_progress{background:#d1ecf1;color:#0c5460}
+.badge-resolved{background:#d4edda;color:#155724}
+.badge-rejected{background:#f8d7da;color:#721c24}
+.badge-open{background:#ede9fe;color:#5b21b6}
+.badge-acknowledged{background:#dbeafe;color:#1e40af}
+.badge-in_review{background:#fef3c7;color:#92400e}
+.badge-addressed{background:#d1fae5;color:#065f46}
+.timeline{margin-top:1.1rem;border-top:1px solid var(--border);padding-top:.9rem}
+.tl{display:flex;gap:1rem;margin-bottom:.7rem;align-items:flex-start}
+.tl-dot{width:11px;height:11px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0}
+.tl-dot.grey{background:#ccc}
+.tl-info strong{font-size:.86rem;color:var(--navy)}
+.tl-info span{display:block;font-size:.76rem;color:var(--muted);margin-top:1px}
+.tl-info em{font-style:normal;font-size:.78rem;color:var(--info);display:block}
+
+/* ══ RECENT CARDS ═══════════════════════════════════════════════════════ */
+.filter-row{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.4rem;align-items:center}
+.filter-row select{padding:.52rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:#fff;cursor:pointer}
+.btn-refresh{padding:.52rem 1.1rem;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;font-weight:700;transition:background .2s}
+.btn-refresh:hover{background:var(--accent)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.1rem}
+.g-card{background:var(--white);border-radius:var(--r);padding:1.3rem;box-shadow:0 2px 14px rgba(0,0,0,.06);border-left:4px solid var(--accent);transition:all .2s;cursor:pointer}
+.g-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.1)}
+.g-cat{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:.35rem}
+.g-title{font-weight:600;margin-bottom:.65rem;font-size:.92rem;line-height:1.4;color:var(--navy)}
+.g-meta{display:flex;justify-content:space-between;align-items:center}
+.g-date{font-size:.76rem;color:var(--muted)}
+.loading-msg{text-align:center;color:var(--muted);padding:2.5rem;font-size:.95rem}
+
+/* ══ DEPT GRID ══════════════════════════════════════════════════════════ */
+.depts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.9rem}
+.dept-card{background:var(--white);border-radius:var(--r);padding:1.4rem 1rem;text-align:center;cursor:pointer;transition:all .25s;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1.5px solid transparent}
+.dept-card:hover{background:var(--navy);transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.15)}
+.dept-card:hover .dept-icon{background:rgba(255,255,255,.12)}
+.dept-card:hover .dept-name{color:#fff}
+.dept-card:hover .dept-count{color:var(--muted)}
+.dept-icon{font-size:1.7rem;width:52px;height:52px;background:var(--light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .85rem;transition:background .25s}
+.dept-name{font-size:.85rem;font-weight:700;color:var(--navy);transition:color .25s;margin-bottom:2px}
+.dept-count{font-size:.73rem;color:var(--muted);transition:color .25s}
+
+/* ══ VOTING PAGE ════════════════════════════════════════════════════════ */
+.vote-hero{
+  background:linear-gradient(135deg,#1e1b4b 0%,#2d1b69 40%,#0a1628 100%);
+  padding:56px 1.5rem 44px;position:relative;overflow:hidden;
+}
+.vote-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 30%,rgba(124,58,237,.2),transparent)}
+.vote-hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:center;position:relative}
+.vote-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);color:#a78bfa;font-size:.72rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:.4rem 1rem;border-radius:50px;margin-bottom:1.4rem}
+.vote-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.8vw,3rem);color:#fff;line-height:1.14;margin-bottom:1rem}
+.vote-hero h1 em{color:#a78bfa;font-style:italic}
+.vote-hero p{color:#9ca3af;font-size:.98rem;line-height:1.75;margin-bottom:1.8rem}
+.vote-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.vote-stat{background:rgba(255,255,255,.06);border:1px solid rgba(124,58,237,.25);border-radius:var(--r);padding:1.2rem;text-align:center}
+.vote-stat-num{font-family:'Playfair Display',serif;font-size:1.9rem;color:#a78bfa;font-weight:700}
+.vote-stat-lbl{font-size:.76rem;color:#6b7280;font-weight:600;margin-top:4px}
+
+/* Issue Cards */
+.issue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.2rem}
+.issue-card{
+  background:var(--white);border-radius:16px;padding:1.5rem;
+  box-shadow:0 2px 16px rgba(0,0,0,.07);border:1.5px solid transparent;
+  transition:all .25s;cursor:pointer;position:relative;overflow:hidden;
+}
+.issue-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--vote),#9333ea)}
+.issue-card:hover{border-color:rgba(124,58,237,.25);transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.12)}
+.issue-card.voted-card{border-color:rgba(124,58,237,.35);background:linear-gradient(135deg,#fff 80%,#f5f3ff)}
+.issue-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.9rem;gap:.8rem}
+.issue-meta{flex:1}
+.issue-cat{font-size:.68rem;font-weight:700;color:var(--vote);text-transform:uppercase;letter-spacing:1px;margin-bottom:.35rem}
+.issue-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;line-height:1.35;color:var(--navy)}
+/* Vote button */
+.vote-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:var(--vote-light);border:2px solid rgba(124,58,237,.25);
+  border-radius:12px;padding:.6rem .9rem;cursor:pointer;transition:all .2s;
+  min-width:60px;font-family:'DM Sans',sans-serif;flex-shrink:0;
+}
+.vote-btn:hover{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.5);transform:scale(1.05)}
+.vote-btn.voted{background:var(--vote);border-color:var(--vote);color:#fff}
+.vote-btn.voted .vote-icon{color:#fff}
+.vote-btn.voted .vote-count{color:#fff}
+.vote-icon{font-size:1.2rem;line-height:1;color:var(--vote);transition:color .2s}
+.vote-count{font-size:.9rem;font-weight:700;color:var(--vote);transition:color .2s}
+.vote-lbl{font-size:.63rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+/* Issue body */
+.issue-desc{font-size:.86rem;color:var(--muted);line-height:1.65;margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.issue-footer{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between}
+.issue-location{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);font-weight:500}
+.city-chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.city-chip{background:rgba(124,58,237,.1);color:#7c3aed;font-size:.67rem;font-weight:700;padding:.22rem .6rem;border-radius:50px;letter-spacing:.3px}
+.issue-date{font-size:.72rem;color:var(--muted)}
+/* Progress bar for votes */
+.vote-progress-bar{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--border)}
+.vpb-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.35rem}
+.vpb-label span:last-child{color:var(--vote);font-weight:700}
+.vpb-track{height:5px;background:#ede9fe;border-radius:4px;overflow:hidden}
+.vpb-fill{height:100%;background:linear-gradient(90deg,var(--vote),#9333ea);border-radius:4px;transition:width .6s ease}
+
+/* Leaderboard */
+.leaderboard{background:var(--white);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.lb-header{background:linear-gradient(135deg,#1e1b4b,#2d1b69);padding:1.3rem 1.5rem;display:flex;align-items:center;gap:.8rem}
+.lb-header h3{font-family:'Playfair Display',serif;color:#fff;font-size:1.15rem}
+.lb-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer}
+.lb-item:hover{background:rgba(124,58,237,.04)}
+.lb-item:last-child{border:none}
+.lb-rank{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.88rem;flex-shrink:0}
+.lb-rank.gold{background:#fef3c7;color:#92400e}
+.lb-rank.silver{background:#f1f5f9;color:#475569}
+.lb-rank.bronze{background:#fff7ed;color:#9a3412}
+.lb-rank.other{background:var(--light);color:var(--muted);font-size:.8rem}
+.lb-info{flex:1}
+.lb-title{font-weight:700;font-size:.9rem;line-height:1.3;color:var(--navy)}
+.lb-city{font-size:.76rem;color:var(--muted);margin-top:2px}
+.lb-votes{display:flex;align-items:center;gap:.35rem;font-weight:700;color:var(--vote);font-size:.95rem}
+
+/* City Heatmap */
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+.city-card{background:var(--white);border-radius:var(--r);padding:1.2rem;box-shadow:0 2px 10px rgba(0,0,0,.06);border-left:4px solid var(--vote);transition:all .2s}
+.city-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.city-name{font-weight:700;font-size:1rem;margin-bottom:.2rem}
+.city-state{font-size:.75rem;color:var(--muted);margin-bottom:.8rem}
+.city-nums{display:flex;gap:1.2rem}
+.city-num{text-align:center}
+.city-num-val{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--vote);font-weight:700}
+.city-num-lbl{font-size:.7rem;color:var(--muted);font-weight:600}
+
+/* New Issue Form */
+.new-issue-form{background:var(--white);border-radius:16px;padding:2rem;box-shadow:var(--shadow);border-top:4px solid var(--vote)}
+.new-issue-form h3{font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:.3rem}
+.new-issue-form>p{color:var(--muted);font-size:.88rem;margin-bottom:1.4rem}
+.btn-vote-submit{background:var(--vote);color:#fff;border:none;padding:.82rem 2rem;border-radius:var(--r);font-weight:700;font-size:.97rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-vote-submit:hover{background:#6d28d9;transform:translateY(-2px)}
+.btn-vote-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Comment section */
+.comments-section{margin-top:1.2rem;border-top:1px solid var(--border);padding-top:1rem}
+.comment-item{display:flex;gap:.7rem;margin-bottom:.8rem}
+.comment-avatar{width:32px;height:32px;border-radius:50%;background:var(--vote);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.comment-body{flex:1}
+.comment-author{font-size:.8rem;font-weight:700;color:var(--navy)}
+.comment-city{font-size:.72rem;color:var(--muted);margin-left:.4rem}
+.comment-text{font-size:.85rem;color:#555;margin-top:2px;line-height:1.5}
+.comment-time{font-size:.7rem;color:var(--muted);margin-top:2px}
+.comment-input-row{display:flex;gap:.7rem;margin-top:.8rem}
+.comment-input-row input{flex:1;font-size:.88rem}
+.btn-comment{background:var(--vote-light);color:var(--vote);border:1.5px solid rgba(124,58,237,.3);padding:.6rem 1.1rem;border-radius:8px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;transition:all .2s;white-space:nowrap}
+.btn-comment:hover{background:var(--vote);color:#fff}
+
+/* Issue Detail Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+.modal-box{background:#fff;border-radius:20px;padding:0;max-width:620px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal-top{background:linear-gradient(135deg,#1e1b4b,#2d1b69);padding:1.6rem;border-radius:20px 20px 0 0;position:relative}
+.modal-top h3{font-family:'Playfair Display',serif;color:#fff;font-size:1.2rem;margin-bottom:.4rem}
+.modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:1.6rem}
+
+/* Phone gate */
+.phone-gate{background:rgba(124,58,237,.06);border:1.5px solid rgba(124,58,237,.2);border-radius:12px;padding:1.2rem;margin-bottom:1.4rem;text-align:center}
+.phone-gate p{font-size:.88rem;color:var(--muted);margin-bottom:.8rem}
+.phone-gate-row{display:flex;gap:.7rem;justify-content:center}
+.phone-gate-row input{max-width:220px;font-size:.9rem}
+.btn-verify{background:var(--vote);color:#fff;border:none;padding:.65rem 1.3rem;border-radius:8px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.9rem;transition:background .2s}
+.btn-verify:hover{background:#6d28d9}
+
+/* ══ ABOUT / FAQ / CONTACT ═══════════════════════════════════════════════ */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+.about-img{background:var(--navy);border-radius:16px;padding:2.5rem;display:flex;flex-direction:column;gap:1.3rem}
+.ab-feat{display:flex;gap:1rem;align-items:flex-start}
+.ab-icon{font-size:1.4rem;flex-shrink:0}
+.ab-text h4{font-weight:700;color:#fff;margin-bottom:.25rem}
+.ab-text p{color:#8892a4;font-size:.86rem;line-height:1.6}
+.faq-list{display:flex;flex-direction:column;gap:.7rem}
+.faq-item{background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.3rem;cursor:pointer;font-weight:600;font-size:.92rem;transition:background .2s}
+.faq-q:hover{background:var(--light)}
+.faq-q .arr{transition:transform .3s;font-size:.9rem;color:var(--accent)}
+.faq-q.open .arr{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 1.3rem 1rem;color:var(--muted);font-size:.88rem;line-height:1.7}
+.faq-a.open{display:block;animation:fadeIn .25s ease}
+.contact-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:2.5rem}
+.contact-info-box{background:var(--navy);border-radius:16px;padding:2.2rem;color:#fff}
+.contact-info-box h3{font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:1.3rem;color:var(--gold)}
+.ci-item{display:flex;gap:.9rem;margin-bottom:1.2rem;align-items:flex-start}
+.ci-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.ci-text{font-size:.87rem;color:#b0bec5;line-height:1.6}
+.ci-text strong{color:#fff;display:block;margin-bottom:2px}
+
+/* ══ ADMIN ═══════════════════════════════════════════════════════════════ */
+.admin-tabs{display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.admin-tab-btn{padding:.55rem 1.2rem;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s}
+.admin-tab-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.admin-sub-panel{display:none}
+.admin-sub-panel.active{display:block;animation:fadeIn .25s ease}
+
+/* ══ TOAST ══════════════════════════════════════════════════════════════ */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;color:#fff;padding:.95rem 1.4rem;border-radius:var(--r);font-weight:600;z-index:4000;display:none;max-width:340px;font-size:.92rem}
+.toast.success{background:var(--success);box-shadow:0 6px 24px rgba(39,174,96,.3)}
+.toast.error{background:var(--danger);box-shadow:0 6px 24px rgba(231,76,60,.3)}
+.toast.info{background:var(--vote);box-shadow:0 6px 24px rgba(124,58,237,.3)}
+.toast.show{display:block;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ FOOTER ═════════════════════════════════════════════════════════════ */
+footer{background:var(--navy);color:var(--muted);padding:2.2rem 1.5rem;border-top:1px solid rgba(255,255,255,.07)}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:1.8rem}
+.footer-brand p{font-size:.86rem;margin-top:.5rem;line-height:1.7;color:#5a6470}
+.footer-col h5{color:var(--white);font-size:.88rem;font-weight:700;margin-bottom:.85rem;letter-spacing:.4px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.footer-col a{color:var(--muted);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{max-width:1200px;margin:1.3rem auto 0;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.8rem}
+.footer-bottom span{color:var(--gold)}
+
+/* ══ RESPONSIVE ════════════════════════════════════════════════════════ */
+@media(max-width:960px){
+  .hero-inner,.vote-hero-inner,.about-grid,.contact-grid{grid-template-columns:1fr}
+  .hero-stats,.vote-stats-grid{grid-template-columns:repeat(4,1fr)}
+  .footer-inner{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-actions .btn-file{display:none}
+  .hamburger{display:flex}
+  .hero{padding:44px 1.2rem 36px}
+  .hero-stats,.vote-stats-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:auto}
+  .tab-pane{padding:1.4rem}
+  .section{padding:36px 1.2rem}
+  .footer-inner{grid-template-columns:1fr}
+  .track-row,.phone-gate-row{flex-direction:column}
+  .form-actions{flex-direction:column}
+  .btn-submit,.btn-reset,.btn-vote-submit{width:100%}
+  .issue-grid{grid-template-columns:1fr}
+}
+
+/* ══ CHATBOT ══════════════════════════════════════════════════════════════ */
+.chat-launcher{position:fixed;bottom:1.5rem;right:1.5rem;z-index:5000}
+.chat-launcher button{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:#fff;padding:.95rem 1.15rem;font-size:.95rem;font-weight:700;border-radius:999px;box-shadow:0 18px 36px rgba(124,58,237,.25);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+.chat-launcher button:hover{transform:translateY(-1px);box-shadow:0 24px 44px rgba(124,58,237,.32)}
+.chat-modal{display:none;position:fixed;bottom:88px;right:1.5rem;width:min(420px,calc(100vw - 2rem));max-height:80vh;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 32px 90px rgba(15,23,42,.18);z-index:5001;flex-direction:column}
+.chat-modal.open{display:flex}
+.chat-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;background:#312e81;color:#fff}
+.chat-header h4{margin:0;font-size:1rem;letter-spacing:.02em}
+.chat-header p{margin:0;color:rgba(255,255,255,.75);font-size:.82rem}
+.chat-body{flex:1;overflow-y:auto;padding:1rem;background:#f8f7ff}
+.chat-empty{color:var(--muted);font-size:.92rem;line-height:1.6}
+.chat-message{display:flex;gap:.75rem;margin-bottom:.85rem;align-items:flex-end}
+.chat-message.bot{justify-content:flex-start}
+.chat-message.user{justify-content:flex-end}
+.chat-bubble{max-width:100%;padding:1rem 1.05rem;border-radius:18px;font-size:.9rem;line-height:1.5;box-shadow:0 12px 30px rgba(15,23,42,.08)}
+.chat-message.bot .chat-bubble{background:#eef2ff;color:#111; border-bottom-left-radius:4px}
+.chat-message.user .chat-bubble{background:#7c3aed;color:#fff;border-bottom-right-radius:4px}
+.chat-input-row{display:flex;gap:.65rem;padding:1rem;background:#fff;border-top:1px solid rgba(15,23,42,.06)}
+.chat-input-row input{flex:1;border:1px solid rgba(15,23,42,.12);border-radius:999px;padding:.9rem 1rem;font-size:.95rem;outline:none}
+.chat-input-row button{border:none;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;padding:.9rem 1.2rem;border-radius:999px;font-weight:700;cursor:pointer;transition:opacity .2s ease}
+.chat-input-row button:hover{opacity:.94}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#" onclick="showPage('home')">
+      <div class="nav-logo">ज</div>
+      <div class="nav-brand-text">Jan<span>Setu</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#" id="nl-home" class="active" onclick="showPage('home');return false">Home</a></li>
+      <li><a href="#" id="nl-vote" class="nav-vote-pill" onclick="showPage('vote');return false">🗳️ Vote on Issues</a></li>
+      <li><a href="#" id="nl-depts" onclick="showPage('home');scrollSec('depts-section');return false">Departments</a></li>
+      <li><a href="#" id="nl-about" onclick="showPage('about');return false">About</a></li>
+      <li><a href="#" id="nl-faqs" onclick="showPage('faqs');return false">FAQs</a></li>
+      <li><a href="#" id="nl-contact" onclick="showPage('contact');return false">Contact</a></li>
+      <li><button id="nl-admin" onclick="showPage('admin')">🔐 Admin</button></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-file" onclick="showPage('home');switchTab('submit')">📝 File Grievance</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" class="mb-vote" onclick="showPage('vote');closeMenu();return false">🗳️ Vote on City Issues</a>
+    <a href="#" onclick="showPage('home');closeMenu();return false">🏠 Home</a>
+    <a href="#" onclick="showPage('home');scrollSec('depts-section');closeMenu();return false">🏛️ Departments</a>
+    <a href="#" onclick="showPage('about');closeMenu();return false">ℹ️ About</a>
+    <a href="#" onclick="showPage('faqs');closeMenu();return false">❓ FAQs</a>
+    <a href="#" onclick="showPage('contact');closeMenu();return false">📞 Contact</a>
+    <button onclick="showPage('admin');closeMenu()">🔐 Admin Dashboard</button>
+    <a class="mb-cta" href="#" onclick="showPage('home');switchTab('submit');closeMenu();return false">📝 File a Grievance</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">🇮🇳 Official Citizens' Portal</div>
+        <h1>Your Voice.<br/><em>Our Responsibility.</em></h1>
+        <p class="hero-sub">File grievances, track resolutions, and now — <strong style="color:var(--gold)">vote on city-wide issues</strong> that affect every Indian citizen.</p>
+        <div class="hero-btns">
+          <button class="btn-hero-p" onclick="switchTab('submit')">📝 File Grievance</button>
+          <button class="btn-hero-vote" onclick="showPage('vote')">🗳️ Vote on Issues</button>
+          <button class="btn-hero-s" onclick="switchTab('track')">🔍 Track Status</button>
+        </div>
+        <div class="steps-row">
+          <div class="step"><div class="step-num">1</div>Submit issue</div>
+          <div class="step"><div class="step-num">2</div>Citizens vote</div>
+          <div class="step"><div class="step-num">3</div>Govt prioritises</div>
+          <div class="step"><div class="step-num">4</div>Gets resolved</div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card"><div class="stat-num" id="st-total">—</div><div class="stat-lbl">Grievances Filed</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-rate">—</div><div class="stat-lbl">Resolution Rate</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-issues">—</div><div class="stat-lbl">Issues Voted On</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-votes">—</div><div class="stat-lbl">Total Votes Cast</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="section" style="padding-top:44px">
+    <div class="container">
+      <div class="tabs-card">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('submit')" id="tbtn-submit">📝 Submit Grievance</button>
+          <button class="tab-btn" onclick="switchTab('track')" id="tbtn-track">🔍 Track Status</button>
+          <button class="tab-btn" onclick="switchTab('recent')" id="tbtn-recent">📋 Recent Cases</button>
+        </div>
+        <!-- SUBMIT -->
+        <div class="tab-pane active" id="tp-submit">
+          <div style="margin-bottom:1.5rem"><h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.3rem">File Your Grievance</h2><p style="color:var(--muted);font-size:.91rem">All * fields required. You'll get a tracking ID via email & SMS.</p></div>
+          <div class="form-grid">
+            <div class="fg"><label>Full Name *</label><input type="text" id="f-name" placeholder="e.g. Ramesh Kumar"/></div>
+            <div class="fg"><label>Mobile *</label><input type="tel" id="f-phone" placeholder="+91 9XXXXXXXXX"/></div>
+            <div class="fg"><label>Email *</label><input type="email" id="f-email" placeholder="you@email.com"/></div>
+            <div class="fg"><label>State *</label>
+              <select id="f-state"><option value="">Select state</option><option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Delhi</option><option>Gujarat</option><option>Haryana</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>West Bengal</option><option>Other</option></select>
+            </div>
+            <div class="fg"><label>Department *</label>
+              <select id="f-dept"><option value="">Select dept.</option><option>Roads & Infrastructure</option><option>Water Supply</option><option>Electricity Board</option><option>Municipal Corporation</option><option>Public Health</option><option>Police</option><option>Education</option><option>Revenue Department</option><option>Ration & PDS</option><option>Sanitation & Waste</option><option>Transport</option><option>Other</option></select>
+            </div>
+            <div class="fg"><label>Category *</label>
+              <select id="f-cat"><option value="">Select category</option><option>Corruption / Bribery</option><option>Poor Service Quality</option><option>Delay in Work</option><option>Document Not Processed</option><option>Safety Hazard</option><option>Illegal Construction</option><option>Infrastructure Damage</option><option>Others</option></select>
+            </div>
+            <div class="fg"><label>Address</label><input type="text" id="f-addr" placeholder="Street, colony, landmark"/></div>
+            <div class="fg"><label>PIN Code</label><input type="text" id="f-pin" placeholder="6-digit PIN" maxlength="6"/></div>
+            <div class="fg full"><label>Grievance Title *</label><input type="text" id="f-title" placeholder="Brief, clear title of the issue"/></div>
+            <div class="fg full">
+              <label>Description *</label>
+              <textarea id="f-desc" maxlength="1000" placeholder="Describe clearly — location, dates, what happened and expected resolution..." oninput="updateChar()"></textarea>
+              <div class="char-bar"><span id="char-count">0 / 1000</span><div class="char-progress"><div class="char-fill" id="char-fill" style="width:0%"></div></div></div>
+            </div>
+            <div class="fg full">
+              <label>Attach Document (optional)</label>
+              <div class="file-drop" id="drop-zone" onclick="document.getElementById('f-file').click()" ondragover="dragOver(event)" ondrop="dropFile(event)" ondragleave="dragLeave(event)">
+                <div style="font-size:2rem;margin-bottom:.4rem">📎</div>
+                <p>Drag & drop or <span>browse files</span></p>
+                <p style="font-size:.76rem;margin-top:.25rem">PDF, JPG, PNG — max 5MB</p>
+                <div class="fname-display" id="fname-display"></div>
+                <input type="file" id="f-file" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="fileSelected(this)"/>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-reset" onclick="resetForm()">↺ Reset</button>
+            <button class="btn-submit" id="submit-btn" onclick="submitGrievance()">Submit Grievance →</button>
+          </div>
+        </div>
+        <!-- TRACK -->
+        <div class="tab-pane" id="tp-track">
+          <div class="track-wrap">
+            <h3>Track Your Grievance</h3>
+            <p>Enter the Tracking ID sent to your registered email or mobile.</p>
+            <div class="track-row">
+              <input type="text" id="track-input" placeholder="e.g. GRV-2024-12345" style="text-transform:uppercase"/>
+              <button class="btn-track" onclick="trackGrievance()">Track →</button>
+            </div>
+            <div class="status-card" id="status-card">
+              <div class="sc-id" id="sc-id"></div>
+              <div class="sc-title" id="sc-title"></div>
+              <div class="sc-dept" id="sc-dept"></div>
+              <span class="badge" id="sc-badge"></span>
+              <div class="timeline" id="sc-timeline"></div>
+            </div>
+          </div>
+        </div>
+        <!-- RECENT -->
+        <div class="tab-pane" id="tp-recent">
+          <div class="filter-row">
+            <select id="f-dept-filter" onchange="loadRecent()"><option value="">All Departments</option><option>Roads & Infrastructure</option><option>Water Supply</option><option>Electricity Board</option><option>Municipal Corporation</option><option>Public Health</option><option>Police</option><option>Education</option></select>
+            <select id="f-status-filter" onchange="loadRecent()"><option value="">All Statuses</option><option value="pending">Pending</option><option value="assigned">Assigned</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option></select>
+            <button class="btn-refresh" onclick="loadRecent()">↻ Refresh</button>
+          </div>
+          <div class="cards-grid" id="recent-grid"><div class="loading-msg">⏳ Loading cases...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Departments -->
+  <div class="section" style="background:var(--white);padding:44px 1.5rem" id="depts-section">
+    <div class="container">
+      <div class="section-head"><div class="tag">Departments</div><h2>Browse by Category</h2><p>Select a department to file or view related grievances.</p></div>
+      <div class="depts-grid">
+        <div class="dept-card" onclick="filterDept('Roads & Infrastructure')"><div class="dept-icon">🏗️</div><div class="dept-name">Roads & Infra</div><div class="dept-count" id="dc-roads">—</div></div>
+        <div class="dept-card" onclick="filterDept('Water Supply')"><div class="dept-icon">💧</div><div class="dept-name">Water Supply</div><div class="dept-count" id="dc-water">—</div></div>
+        <div class="dept-card" onclick="filterDept('Electricity Board')"><div class="dept-icon">⚡</div><div class="dept-name">Electricity</div><div class="dept-count" id="dc-elec">—</div></div>
+        <div class="dept-card" onclick="filterDept('Public Health')"><div class="dept-icon">🏥</div><div class="dept-name">Public Health</div><div class="dept-count" id="dc-health">—</div></div>
+        <div class="dept-card" onclick="filterDept('Education')"><div class="dept-icon">📚</div><div class="dept-name">Education</div><div class="dept-count" id="dc-edu">—</div></div>
+        <div class="dept-card" onclick="filterDept('Police')"><div class="dept-icon">🚔</div><div class="dept-name">Police</div><div class="dept-count" id="dc-police">—</div></div>
+        <div class="dept-card" onclick="filterDept('Ration & PDS')"><div class="dept-icon">🌾</div><div class="dept-name">Ration / PDS</div><div class="dept-count" id="dc-ration">—</div></div>
+        <div class="dept-card" onclick="filterDept('Revenue Department')"><div class="dept-icon">🏛️</div><div class="dept-name">Revenue Dept</div><div class="dept-count" id="dc-rev">—</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     VOTING PAGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-vote">
+  <!-- Vote Hero -->
+  <div class="vote-hero">
+    <div class="vote-hero-inner">
+      <div>
+        <div class="vote-badge">🗳️ Citizen Power</div>
+        <h1>Vote on Issues<br/>Affecting <em>Every City</em></h1>
+        <p>Common problems across India — potholed roads, water outages, power cuts. Upvote issues affecting your city so the government knows what to prioritise first.</p>
+        <div class="hero-btns">
+          <button class="btn-hero-vote" onclick="document.getElementById('vote-issues-section').scrollIntoView({behavior:'smooth'})">🗳️ Start Voting</button>
+          <button class="btn-hero-s" onclick="openNewIssueModal()">➕ Report New Issue</button>
+        </div>
+      </div>
+      <div class="vote-stats-grid">
+        <div class="vote-stat"><div class="vote-stat-num" id="vs-issues">—</div><div class="vote-stat-lbl">Issues Reported</div></div>
+        <div class="vote-stat"><div class="vote-stat-num" id="vs-votes">—</div><div class="vote-stat-lbl">Votes Cast</div></div>
+        <div class="vote-stat"><div class="vote-stat-num" id="vs-cities">—</div><div class="vote-stat-lbl">Cities Participating</div></div>
+        <div class="vote-stat"><div class="vote-stat-num" id="vs-addressed">—</div><div class="vote-stat-lbl">Issues Addressed</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone identity gate -->
+  <div class="section" style="padding-bottom:0" id="phone-gate-section">
+    <div class="container">
+      <div class="phone-gate" id="main-phone-gate" style="display:none">
+        <p>📱 <strong>Verify your mobile</strong> to vote — one vote per person per issue.</p>
+        <div class="phone-gate-row">
+          <input type="tel" id="voter-phone" placeholder="+91 9XXXXXXXXX" style="max-width:220px"/>
+          <button class="btn-verify" onclick="setVoterPhone()">Verify & Vote</button>
+        </div>
+      </div>
+      <div id="voter-verified-bar" style="display:none;background:rgba(124,58,237,.08);border:1.5px solid rgba(124,58,237,.2);border-radius:12px;padding:.9rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+        <span style="font-size:.88rem;color:#5b21b6;font-weight:600">✅ Voting as: <span id="voter-display"></span></span>
+        <button onclick="clearVoter()" style="background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif">Change number</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issues + Leaderboard -->
+  <div class="section" id="vote-issues-section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start">
+        <!-- LEFT: Issues -->
+        <div>
+          <div class="section-head">
+            <div class="tag vote-tag">Live Issues</div>
+            <h2>Issues Needing Your Vote</h2>
+            <p>Click the upvote button to back an issue. Your city's name gets added to supporters.</p>
+          </div>
+          <!-- Filters -->
+          <div class="filter-row" style="margin-bottom:1.2rem">
+            <select id="v-city-f" onchange="loadIssues()"><option value="">All Cities</option><option>Delhi</option><option>Mumbai</option><option>Bengaluru</option><option>Chennai</option><option>Hyderabad</option><option>Kolkata</option><option>Pune</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option><option>Surat</option><option>Patna</option></select>
+            <select id="v-cat-f" onchange="loadIssues()"><option value="">All Categories</option><option>Roads & Potholes</option><option>Water Supply</option><option>Power Outages</option><option>Sanitation</option><option>Air Pollution</option><option>Public Safety</option><option>Waterlogging</option><option>Street Lights</option><option>Traffic</option><option>Stray Animals</option></select>
+            <select id="v-sort-f" onchange="loadIssues()"><option value="votes">Most Voted</option><option value="recent">Most Recent</option></select>
+            <button class="btn-refresh" onclick="loadIssues()">↻</button>
+          </div>
+          <div id="issues-grid" class="issue-grid"><div class="loading-msg">⏳ Loading issues...</div></div>
+          <div style="text-align:center;margin-top:1.5rem">
+            <button class="btn-reset" onclick="openNewIssueModal()">➕ Report a New Issue</button>
+          </div>
+        </div>
+        <!-- RIGHT: Leaderboard -->
+        <div style="position:sticky;top:80px">
+          <div class="section-head" style="margin-bottom:1rem">
+            <div class="tag vote-tag">🏆 Leaderboard</div>
+            <h2 style="font-size:1.3rem">Top Issues Nationally</h2>
+          </div>
+          <div class="leaderboard" id="leaderboard">
+            <div class="lb-header"><span style="font-size:1.3rem">🏆</span><h3>National Leaderboard</h3></div>
+            <div id="lb-items"><div class="loading-msg" style="padding:1.5rem">Loading...</div></div>
+          </div>
+          <div style="margin-top:1.5rem">
+            <div class="section-head" style="margin-bottom:.8rem"><div class="tag vote-tag">🗺️ City Activity</div><h2 style="font-size:1.2rem">Most Active Cities</h2></div>
+            <div id="city-activity"><div class="loading-msg" style="padding:1rem">Loading...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT PAGE ══ -->
+<div class="page" id="page-about">
+  <div class="section"><div class="container">
+    <div class="tag">About Jan Setu</div>
+    <div class="about-grid" style="margin-top:1.4rem">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.9rem">Empowering Every Citizen</h2>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:1.3rem">Jan Setu bridges the gap between citizens and government. A transparent digital-first channel where every voice matters and every complaint is tracked to resolution.</p>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:1.3rem">New: Our <strong>City Issues Voting</strong> feature lets citizens collectively signal which problems affect the most people — across all cities — pushing government to act on real priorities.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-top:1.8rem">
+          <div style="background:var(--light);border-radius:12px;padding:1.1rem;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--accent);font-weight:700">30+</div><div style="font-size:.8rem;color:var(--muted);font-weight:600">Departments</div></div>
+          <div style="background:var(--light);border-radius:12px;padding:1.1rem;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--accent);font-weight:700">28</div><div style="font-size:.8rem;color:var(--muted);font-weight:600">States Covered</div></div>
+        </div>
+      </div>
+      <div class="about-img">
+        <div class="ab-feat"><div class="ab-icon">🗳️</div><div class="ab-text"><h4>Democratic Voting</h4><p>Citizens upvote real problems. The most-voted issues rise to the top, giving government clear data on what needs fixing first.</p></div></div>
+        <div class="ab-feat"><div class="ab-icon">🔒</div><div class="ab-text"><h4>Secure & Private</h4><p>Phone numbers are hashed — we prevent double-voting while protecting your identity.</p></div></div>
+        <div class="ab-feat"><div class="ab-icon">📱</div><div class="ab-text"><h4>Real-time Notifications</h4><p>SMS and email updates at every stage — from submission to resolution.</p></div></div>
+        <div class="ab-feat"><div class="ab-icon">📊</div><div class="ab-text"><h4>City Heat Maps</h4><p>See which cities are most affected by which issues, in real time.</p></div></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ══ FAQs PAGE ══ -->
+<div class="page" id="page-faqs">
+  <div class="section"><div class="container">
+    <div class="tag">Help & FAQs</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:1.4rem">Frequently Asked Questions</h2>
+    <div class="faq-list" id="faq-list"></div>
+  </div></div>
+</div>
+
+<!-- ══ CONTACT PAGE ══ -->
+<div class="page" id="page-contact">
+  <div class="section"><div class="container">
+    <div class="tag">Get in Touch</div>
+    <div class="contact-grid" style="margin-top:1.4rem">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:.9rem">Contact Us</h2>
+        <p style="color:var(--muted);margin-bottom:1.4rem;line-height:1.7">For queries, feedback, or technical issues with the portal, reach us through any of the channels below.</p>
+        <div class="contact-info-box">
+          <h3>Support Channels</h3>
+          <div class="ci-item"><div class="ci-icon">📞</div><div class="ci-text"><strong>Toll-Free Helpline</strong>1800-XXX-XXXX (Mon–Sat, 9AM–6PM)</div></div>
+          <div class="ci-item"><div class="ci-icon">📧</div><div class="ci-text"><strong>Email Support</strong>help@jansetu.gov.in</div></div>
+          <div class="ci-item"><div class="ci-icon">📍</div><div class="ci-text"><strong>Head Office</strong>Ministry of Administrative Reforms, Sardar Patel Bhawan, New Delhi – 110001</div></div>
+          <div class="ci-item"><div class="ci-icon">🕐</div><div class="ci-text"><strong>Response Time</strong>Email — within 48 hours · Grievances — within 30 working days</div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;margin-bottom:1.1rem">Send a Message</h3>
+        <div class="fg" style="margin-bottom:.9rem"><label>Your Name</label><input type="text" placeholder="Full name"/></div>
+        <div class="fg" style="margin-bottom:.9rem"><label>Email</label><input type="email" placeholder="you@email.com"/></div>
+        <div class="fg" style="margin-bottom:.9rem"><label>Message</label><textarea placeholder="How can we help?" style="min-height:120px"></textarea></div>
+        <button class="btn-submit" style="width:100%" onclick="showToast('Message sent! We will respond within 48 hours.','success')">Send Message</button>
+        <div style="margin-top:1rem;padding:1rem;border-radius:18px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);font-size:.93rem;color:#e9d5ff">
+          Want a quick answer? Tap the chat bubble to ask <strong>Setu Aarya</strong> directly about grievance filing, voting, or portal help.
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ══ ADMIN PAGE ══ -->
+<div class="page" id="page-admin">
+  <div id="admin-login-screen">
+    <div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem">
+      <div style="background:var(--white);border-radius:16px;padding:2.2rem;max-width:380px;width:100%;box-shadow:var(--shadow);text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.9rem">🔐</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:.35rem">Admin Access</h2>
+        <p style="color:var(--muted);font-size:.88rem;margin-bottom:1.4rem">Enter your admin token to access the dashboard.</p>
+        <div class="fg" style="margin-bottom:.9rem;text-align:left"><label>Admin Token</label><input type="password" id="admin-token" placeholder="Enter secret token" onkeydown="if(event.key==='Enter')adminLogin()"/></div>
+        <button class="btn-submit" style="width:100%" onclick="adminLogin()">Access Dashboard →</button>
+      </div>
+    </div>
+  </div>
+  <div id="admin-dashboard" style="display:none">
+    <div class="section"><div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.8rem">
+        <div><div class="tag">Admin Dashboard</div><h2 style="font-family:'Playfair Display',serif;font-size:1.7rem">Grievance & Issue Management</h2></div>
+        <button class="btn-reset" onclick="adminLogout()">🚪 Logout</button>
+      </div>
+      <!-- Admin tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="adminSwitchTab('grievances')" id="atab-grievances">📋 Grievances</button>
+        <button class="admin-tab-btn" onclick="adminSwitchTab('issues')" id="atab-issues">🗳️ City Issues</button>
+      </div>
+      <!-- Grievances panel -->
+      <div class="admin-sub-panel active" id="apanel-grievances">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem">
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--warn)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="as-pending">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Pending</div></div>
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--info)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="as-progress">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">In Progress</div></div>
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--success)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="as-resolved">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Resolved</div></div>
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--accent)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="as-total">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Total</div></div>
+        </div>
+        <div class="filter-row" style="margin-bottom:1rem">
+          <select id="admin-status-f" onchange="adminLoadCases()"><option value="">All Statuses</option><option value="pending">Pending</option><option value="assigned">Assigned</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="rejected">Rejected</option></select>
+          <select id="admin-dept-f" onchange="adminLoadCases()"><option value="">All Departments</option><option>Roads & Infrastructure</option><option>Water Supply</option><option>Electricity Board</option><option>Public Health</option><option>Police</option><option>Education</option></select>
+          <button class="btn-refresh" onclick="adminLoadCases()">↻ Refresh</button>
+        </div>
+        <div style="background:var(--white);border-radius:16px;box-shadow:var(--shadow);overflow:hidden"><div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr style="background:var(--navy);color:var(--muted);font-size:.77rem;text-transform:uppercase;letter-spacing:.5px">
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">ID</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Title</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Dept</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Citizen</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Date</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Status</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Actions</th>
+            </tr></thead>
+            <tbody id="admin-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
+        </div></div>
+      </div>
+      <!-- City Issues panel -->
+      <div class="admin-sub-panel" id="apanel-issues">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem">
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--vote)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="ai-total">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Total Issues</div></div>
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--success)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="ai-addressed">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Addressed</div></div>
+          <div style="background:var(--white);border-radius:12px;padding:1.1rem;box-shadow:var(--shadow);border-top:3px solid var(--warn)"><div style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif" id="ai-votes">—</div><div style="font-size:.78rem;color:var(--muted);font-weight:600">Total Votes</div></div>
+        </div>
+        <button class="btn-refresh" onclick="adminLoadIssues()" style="margin-bottom:1rem">↻ Refresh Issues</button>
+        <div style="background:var(--white);border-radius:16px;box-shadow:var(--shadow);overflow:hidden"><div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr style="background:linear-gradient(135deg,#1e1b4b,#2d1b69);color:rgba(255,255,255,.7);font-size:.77rem;text-transform:uppercase;letter-spacing:.5px">
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">ID</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Issue</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">City</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Votes</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Cities</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Status</th>
+              <th style="padding:.9rem 1rem;text-align:left;font-weight:600">Actions</th>
+            </tr></thead>
+            <tbody id="admin-issues-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
+        </div></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<!-- Grievance status update -->
+<div class="modal-overlay" id="modal-status" onclick="if(event.target===this)closeModal('modal-status')">
+  <div class="modal-box">
+    <div class="modal-top"><button class="modal-close" onclick="closeModal('modal-status')">✕</button><h3>Update Grievance Status</h3><p style="color:#9ca3af;font-size:.83rem;margin-top:.3rem" id="modal-gid-label"></p></div>
+    <div class="modal-body">
+      <div class="fg" style="margin-bottom:.9rem"><label>New Status *</label><select id="modal-status-sel"><option value="assigned">Assigned</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="rejected">Rejected</option></select></div>
+      <div class="fg" style="margin-bottom:.9rem"><label>Officer Name</label><input type="text" id="modal-officer" placeholder="Handling officer name"/></div>
+      <div class="fg" style="margin-bottom:1.4rem"><label>Remark (sent to citizen)</label><textarea id="modal-remark" placeholder="Update for citizen..." style="min-height:75px"></textarea></div>
+      <div class="form-actions"><button class="btn-reset" onclick="closeModal('modal-status')">Cancel</button><button class="btn-submit" onclick="submitStatusUpdate()">Update & Notify →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Issue status update -->
+<div class="modal-overlay" id="modal-issue-status" onclick="if(event.target===this)closeModal('modal-issue-status')">
+  <div class="modal-box">
+    <div class="modal-top" style="background:linear-gradient(135deg,#1e1b4b,#2d1b69)"><button class="modal-close" onclick="closeModal('modal-issue-status')">✕</button><h3>Update Issue Status</h3><p style="color:#9ca3af;font-size:.83rem;margin-top:.3rem" id="modal-issue-id-label"></p></div>
+    <div class="modal-body">
+      <div class="fg" style="margin-bottom:1.4rem"><label>New Status</label><select id="modal-issue-status-sel"><option value="acknowledged">Acknowledged</option><option value="in_review">In Review</option><option value="addressed">Addressed</option></select></div>
+      <div class="form-actions"><button class="btn-reset" onclick="closeModal('modal-issue-status')">Cancel</button><button class="btn-submit" onclick="submitIssueStatusUpdate()">Update →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- New Issue form -->
+<div class="modal-overlay" id="modal-new-issue" onclick="if(event.target===this)closeModal('modal-new-issue')">
+  <div class="modal-box">
+    <div class="modal-top" style="background:linear-gradient(135deg,#1e1b4b,#2d1b69)"><button class="modal-close" onclick="closeModal('modal-new-issue')">✕</button><h3>Report a City Issue</h3><p style="color:#9ca3af;font-size:.83rem;margin-top:.3rem">This issue will be visible for all citizens to vote on.</p></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg full"><label>Issue Title *</label><input type="text" id="ni-title" placeholder="e.g. Waterlogging every monsoon near Station Road"/></div>
+        <div class="fg"><label>Category *</label>
+          <select id="ni-cat"><option value="">Select</option><option>Roads & Potholes</option><option>Water Supply</option><option>Power Outages</option><option>Sanitation</option><option>Air Pollution</option><option>Public Safety</option><option>Waterlogging</option><option>Street Lights</option><option>Traffic</option><option>Stray Animals</option><option>Other</option></select>
+        </div>
+        <div class="fg"><label>Your City *</label>
+          <select id="ni-city"><option value="">Select city</option><option>Delhi</option><option>Mumbai</option><option>Bengaluru</option><option>Chennai</option><option>Hyderabad</option><option>Kolkata</option><option>Pune</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option><option>Surat</option><option>Patna</option><option>Other</option></select>
+        </div>
+        <div class="fg"><label>State *</label>
+          <select id="ni-state"><option value="">Select state</option><option>Andhra Pradesh</option><option>Delhi</option><option>Gujarat</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>West Bengal</option><option>Other</option></select>
+        </div>
+        <div class="fg full" style="display:flex;align-items:center;gap:.75rem;margin-top:-0.25rem">
+          <button type="button" class="btn-reset" style="padding:.85rem 1rem;min-width:170px" onclick="autoFetchLocation(event)">📍 Auto fetch location</button>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.4">Allow browser location access to auto-fill city and state from your device.</div>
+        </div>
+        <div class="fg"><label>Your Name</label><input type="text" id="ni-name" placeholder="Anonymous or your name"/></div>
+        <div class="fg full"><label>Description *</label><textarea id="ni-desc" placeholder="Describe the issue clearly — where, how often, impact on citizens..." style="min-height:90px"></textarea></div>
+      </div>
+      <div class="form-actions" style="margin-top:1.2rem"><button class="btn-reset" onclick="closeModal('modal-new-issue')">Cancel</button><button class="btn-vote-submit" id="ni-submit-btn" onclick="submitNewIssue()">Submit Issue →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Issue detail -->
+<div class="modal-overlay" id="modal-issue-detail" onclick="if(event.target===this)closeModal('modal-issue-detail')">
+  <div class="modal-box" style="max-width:680px">
+    <div class="modal-top" style="background:linear-gradient(135deg,#1e1b4b,#2d1b69)"><button class="modal-close" onclick="closeModal('modal-issue-detail')">✕</button><h3 id="detail-title">Issue Detail</h3><p style="color:#9ca3af;font-size:.82rem;margin-top:.3rem" id="detail-meta"></p></div>
+    <div class="modal-body">
+      <div id="detail-badge-row" style="margin-bottom:1rem"></div>
+      <p id="detail-desc" style="color:var(--muted);line-height:1.75;font-size:.93rem;margin-bottom:1.2rem"></p>
+      <div id="detail-city-votes" style="margin-bottom:1.2rem"></div>
+      <!-- Comments -->
+      <div class="comments-section">
+        <strong style="font-size:.88rem;font-weight:700">💬 Citizen Experiences</strong>
+        <div id="detail-comments" style="margin-top:.9rem"></div>
+        <div class="comment-input-row" id="detail-comment-row">
+          <input type="text" id="comment-author" placeholder="Your name"/>
+          <input type="text" id="comment-text" placeholder="Share your experience..." style="flex:2"/>
+          <button class="btn-comment" onclick="postComment()">Post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><div class="nav-brand-text" style="font-size:1.2rem">Jan<span style="color:var(--gold)">Setu</span></div><p>A citizen-first grievance redressal and civic voting platform. Transparent. Accountable. Democratic.</p></div>
+    <div class="footer-col"><h5>Quick Links</h5><ul><li><a href="#" onclick="showPage('home');return false">Home</a></li><li><a href="#" onclick="switchTab('submit');return false">File Grievance</a></li><li><a href="#" onclick="showPage('vote');return false">Vote on Issues</a></li><li><a href="#" onclick="showPage('about');return false">About</a></li></ul></div>
+    <div class="footer-col"><h5>Support</h5><ul><li><a href="#" onclick="showPage('faqs');return false">FAQs</a></li><li><a href="#" onclick="showPage('contact');return false">Contact Us</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">RTI</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><div>© 2024 <span>Jan Setu Portal</span> · Government of India</div><div>Toll-free: <span>1800-XXX-XXXX</span> · help@jansetu.gov.in</div></div>
+</footer>
+
+<div class="chat-launcher"><button onclick="toggleChat()">💬 Setu Aarya</button></div>
+<div class="chat-modal" id="chat-modal">
+  <div class="chat-header">
+    <div>
+      <h4>Setu Aarya</h4>
+      <p>AI assistant for Jan Setu</p>
+    </div>
+    <button class="modal-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-body" id="chat-body"><div class="chat-empty">Ask Setu Aarya anything about grievances, issue voting, or citizen services.</div></div>
+  <div class="chat-input-row">
+    <input id="chat-input" type="text" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChatMessage()" />
+    <button onclick="sendChatMessage()">Send</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+const API = 'http://localhost:8000/api';
+let adminToken = '';
+let currentGrievanceId = '';
+let currentIssueAdminId = '';
+let voterPhone = localStorage.getItem('jansetu_voter_phone') || '';
+let voterCity  = localStorage.getItem('jansetu_voter_city') || 'Delhi';
+let votedIssues = JSON.parse(localStorage.getItem('jansetu_voted') || '[]');
+let currentDetailIssueId = '';
+
+// ── DEMO DATA (when backend is offline) ──────────────────────────────────
+const DEMO_ISSUES = [
+  {id:'ISS-2024-11111',title:'Potholed Roads Destroy Vehicles Every Monsoon',description:'Every year during monsoon the main roads turn into craters. Vehicles get damaged, accidents happen. Multiple complaints filed but no action.',category:'Roads & Potholes',city:'Delhi',state:'Delhi',reported_by:'Suresh M.',votes:2847,city_votes:{'Delhi':1200,'Mumbai':634,'Pune':420,'Jaipur':310,'Lucknow':283},upvote_cities:['Delhi','Mumbai','Pune','Jaipur','Lucknow'],status:'open',created_at:'2024-01-15T10:00:00',comments:[{author:'Ritu S.',city:'Delhi',text:'My car suspension broke twice this year because of potholes near Karol Bagh.',timestamp:'2024-01-16T08:30:00'},{author:'Amit K.',city:'Mumbai',text:'Same problem in Andheri! The potholes fill up after rain but come back immediately.',timestamp:'2024-01-17T12:00:00'}]},
+  {id:'ISS-2024-22222',title:'24-Hour Water Shortage in Residential Colonies',description:'Many colonies get water for only 2-3 hours a day. In summers it drops to every alternate day. Residents forced to buy expensive tankers.',category:'Water Supply',city:'Bengaluru',state:'Karnataka',reported_by:'Priya N.',votes:2103,city_votes:{'Bengaluru':890,'Chennai':480,'Hyderabad':360,'Pune':230,'Delhi':143},upvote_cities:['Bengaluru','Chennai','Hyderabad','Pune','Delhi'],status:'acknowledged',created_at:'2024-01-20T09:00:00',comments:[{author:'Kavya R.',city:'Bengaluru',text:'Whitefield area gets water only on alternate days. It\'s been like this for 3 years.',timestamp:'2024-01-21T07:00:00'}]},
+  {id:'ISS-2024-33333',title:'Power Cuts of 8-12 Hours Daily in Summer',description:'Summer power cuts last 8-12 hours daily. Transformers blow up. No prior notice given. Elderly and patients are severely affected.',category:'Power Outages',city:'Patna',state:'Bihar',reported_by:'Vijay T.',votes:1876,city_votes:{'Patna':700,'Lucknow':420,'Varanasi':360,'Allahabad':280,'Agra':116},upvote_cities:['Patna','Lucknow','Varanasi','Allahabad','Agra'],status:'open',created_at:'2024-02-01T11:00:00',comments:[]},
+  {id:'ISS-2024-44444',title:'Garbage Not Collected for Weeks — Disease Outbreak Risk',description:'Municipal garbage trucks haven\'t come in 3 weeks. Waste piles up on streets attracting dogs, rodents and mosquitoes. Dengue cases rising.',category:'Sanitation',city:'Mumbai',state:'Maharashtra',reported_by:'Fatima B.',votes:1542,city_votes:{'Mumbai':800,'Pune':380,'Nagpur':220,'Nashik':142},upvote_cities:['Mumbai','Pune','Nagpur','Nashik'],status:'in_review',created_at:'2024-02-10T14:00:00',comments:[{author:'Rahul D.',city:'Mumbai',text:'Dharavi ward has not seen a garbage truck in 20 days. Please escalate!',timestamp:'2024-02-11T09:00:00'}]},
+  {id:'ISS-2024-55555',title:'No Street Lights — Women Fear Walking After Dark',description:'Street lights have been broken for months on the main road connecting the colony to the market. Women and elderly avoid going out after 7PM.',category:'Street Lights',city:'Jaipur',state:'Rajasthan',reported_by:'Sunita G.',votes:1234,city_votes:{'Jaipur':560,'Jodhpur':280,'Kota':240,'Ajmer':154},upvote_cities:['Jaipur','Jodhpur','Kota','Ajmer'],status:'open',created_at:'2024-02-15T16:00:00',comments:[]},
+  {id:'ISS-2024-66666',title:'Waterlogging Paralyses City After Every Rainfall',description:'Even light rain causes knee-deep waterlogging in major areas. Cars stall, shops flood. The drainage system has never been upgraded.',category:'Waterlogging',city:'Chennai',state:'Tamil Nadu',reported_by:'Karthik S.',votes:987,city_votes:{'Chennai':520,'Coimbatore':220,'Madurai':160,'Tiruchirappalli':87},upvote_cities:['Chennai','Coimbatore','Madurai','Tiruchirappalli'],status:'open',created_at:'2024-02-20T10:00:00',comments:[]},
+];
+
+const DEMO_CITY_STATS = [
+  {city:'Delhi',state:'Delhi',issues:48,total_votes:6230},
+  {city:'Mumbai',state:'Maharashtra',issues:41,total_votes:5890},
+  {city:'Bengaluru',state:'Karnataka',issues:36,total_votes:4210},
+  {city:'Chennai',state:'Tamil Nadu',issues:29,total_votes:3450},
+  {city:'Hyderabad',state:'Telangana',issues:25,total_votes:2890},
+  {city:'Kolkata',state:'West Bengal',issues:22,total_votes:2340},
+];
+
+// ── NAV ────────────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('#nl-home,#nl-vote,#nl-about,#nl-faqs,#nl-contact,#nl-admin').forEach(a => a.classList.remove('active'));
+  const nl = document.getElementById('nl-' + name);
+  if (nl) nl.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeMenu();
+  if (name === 'home') loadStats();
+  if (name === 'vote') { initVotePage(); }
+}
+function switchTab(name) {
+  ['submit','track','recent'].forEach(t => {
+    document.getElementById('tbtn-'+t)?.classList.remove('active');
+    document.getElementById('tp-'+t)?.classList.remove('active');
+  });
+  document.getElementById('tbtn-'+name)?.classList.add('active');
+  document.getElementById('tp-'+name)?.classList.add('active');
+  if (name === 'recent') loadRecent(); 
+ 
+  showPage('home');
+}
+function toggleMenu() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+function scrollSec(id) { setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'}),120); }
+
+// ── FORM ───────────────────────────────────────────────────────────────────
+function updateChar() {
+  const v = document.getElementById('f-desc').value.length;
+  document.getElementById('char-count').textContent = v+' / 1000';
+  document.getElementById('char-fill').style.width = (v/10)+'%';
+}
+function fileSelected(inp) { if(inp.files.length) document.getElementById('fname-display').textContent = '📄 '+inp.files[0].name; }
+function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag'); }
+function dragLeave() { document.getElementById('drop-zone').classList.remove('drag'); }
+function dropFile(e) { e.preventDefault(); dragLeave(); const f=e.dataTransfer.files[0]; if(f) document.getElementById('fname-display').textContent='📄 '+f.name; }
+
+async function submitGrievance() {
+  const fields = {
+    name:document.getElementById('f-name').value.trim(),
+    phone:document.getElementById('f-phone').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    state:document.getElementById('f-state').value,
+    department:document.getElementById('f-dept').value,
+    category:document.getElementById('f-cat').value,
+    title:document.getElementById('f-title').value.trim(),
+    description:document.getElementById('f-desc').value.trim(),
+    address:document.getElementById('f-addr').value.trim(),
+    pincode:document.getElementById('f-pin').value.trim(),
+  };
+  const required = ['name','phone','email','state','department','category','title','description'];
+  if (required.some(k => !fields[k])) { showToast('Please fill all required fields.','error'); return; }
+  const btn = document.getElementById('submit-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Submitting...';
+  try {
+    const res = await fetch(API+'/grievances',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(fields)});
+    const data = await res.json();
+    if (res.ok) {
+      showToast('✅ Submitted! ID: '+data.tracking_id,'success');
+      resetForm(); switchTab('track');
+      document.getElementById('track-input').value = data.tracking_id;
+      await trackGrievance();
+    } else showToast('Error: '+(data.detail||'Failed'),'error');
+  } catch(e) {
+    const fakeId = 'GRV-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
+    showToast('✅ [Demo] Submitted! ID: '+fakeId,'success');
+    resetForm();
+  } finally { btn.disabled=false; btn.innerHTML='Submit Grievance →'; }
+}
+function resetForm() {
+  ['f-name','f-phone','f-email','f-addr','f-pin','f-title','f-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-state','f-dept','f-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  document.getElementById('char-count').textContent='0 / 1000';
+  document.getElementById('char-fill').style.width='0%';
+  document.getElementById('fname-display').textContent='';
+}
+
+// ── TRACKER ────────────────────────────────────────────────────────────────
+async function trackGrievance() {
+  const gid = document.getElementById('track-input').value.trim().toUpperCase();
+  if (!gid) { showToast('Enter a tracking ID','error'); return; }
+  const card = document.getElementById('status-card');
+  try {
+    const res = await fetch(API+'/grievances/'+gid);
+    if (!res.ok) { card.classList.remove('show'); showToast('No grievance found: '+gid,'error'); return; }
+    const g = await res.json();
+    document.getElementById('sc-id').textContent = '📋 '+g.id;
+    document.getElementById('sc-title').textContent = g.title;
+    document.getElementById('sc-dept').textContent = g.department+' · '+g.category;
+    const badge = document.getElementById('sc-badge');
+    badge.textContent = g.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+    badge.className = 'badge badge-'+g.status;
+    document.getElementById('sc-timeline').innerHTML = (g.timeline||[]).map(t=>`
+      <div class="tl"><div class="tl-dot ${t.done===false?'grey':''}"></div>
+      <div class="tl-info"><strong>${t.event}</strong><span>${new Date(t.timestamp).toLocaleString('en-IN')}</span>${t.remark?`<em>💬 ${t.remark}</em>`:''}</div></div>`).join('');
+    card.classList.add('show');
+  } catch(e) { showToast('Backend offline — demo mode','error'); }
+}
+
+// ── RECENT CASES ───────────────────────────────────────────────────────────
+async function loadRecent() {
+  const dept = document.getElementById('f-dept-filter')?.value||'';
+  const status = document.getElementById('f-status-filter')?.value||'';
+  const grid = document.getElementById('recent-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="loading-msg">⏳ Loading...</div>';
+  try {
+    let url = API+'/grievances?limit=18';
+    if (dept) url += '&department='+encodeURIComponent(dept);
+    if (status) url += '&status='+status;
+    const data = await (await fetch(url)).json();
+    if (!data.length) { grid.innerHTML='<div class="loading-msg">No cases found.</div>'; return; }
+    grid.innerHTML = data.map(g=>`
+      <div class="g-card" onclick="viewCase('${g.id}')">
+        <div class="g-cat">${g.category}</div>
+        <div class="g-title">${g.title}</div>
+        <div class="g-meta"><span class="g-date">📅 ${new Date(g.created_at).toLocaleDateString('en-IN')}</span>
+        <span class="badge badge-${g.status}">${g.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></div>
+      </div>`).join('');
+  } catch(e) { grid.innerHTML='<div class="loading-msg">Backend offline.</div>'; }
+}
+function viewCase(id) { switchTab('track'); document.getElementById('track-input').value=id; trackGrievance(); }
+function filterDept(d) { switchTab('recent'); setTimeout(()=>{ document.getElementById('f-dept-filter').value=d; loadRecent(); },100); }
+
+// ── STATS ──────────────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const [s, iv] = await Promise.all([
+      fetch(API+'/stats').then(r=>r.json()),
+      fetch(API+'/issues?limit=100').then(r=>r.json()),
+    ]);
+    document.getElementById('st-total').textContent = s.total.toLocaleString('en-IN');
+    document.getElementById('st-rate').textContent = s.resolution_rate+'%';
+    document.getElementById('st-issues').textContent = iv.length;
+    const totalVotes = iv.reduce((a,b)=>a+(b.votes||0),0);
+    document.getElementById('st-votes').textContent = totalVotes.toLocaleString('en-IN');
+    const dmap={'Roads & Infrastructure':'dc-roads','Water Supply':'dc-water','Electricity Board':'dc-elec','Public Health':'dc-health','Education':'dc-edu','Police':'dc-police','Ration & PDS':'dc-ration','Revenue Department':'dc-rev'};
+    for (const [k,id] of Object.entries(dmap)) { const el=document.getElementById(id); if(el) el.textContent=(s.by_department?.[k]||0)+' cases'; }
+  } catch(e) {
+    // demo fallback
+    document.getElementById('st-total').textContent='1,24,891';
+    document.getElementById('st-rate').textContent='89%';
+    document.getElementById('st-issues').textContent=DEMO_ISSUES.length;
+    document.getElementById('st-votes').textContent=DEMO_ISSUES.reduce((a,b)=>a+b.votes,0).toLocaleString('en-IN');
+  }
+}
+
+// ══ VOTING SYSTEM ══════════════════════════════════════════════════════════
+
+function initVotePage() {
+  updateVoterUI();
+  loadIssues();
+  loadLeaderboard();
+  loadCityStats();
+  loadVoteStats();
+}
+
+// Voter identity
+function setVoterPhone() {
+  const ph = document.getElementById('voter-phone').value.trim();
+  if (!ph || ph.length < 8) { showToast('Enter a valid mobile number','error'); return; }
+  voterPhone = ph;
+  voterCity = document.getElementById('v-city-f')?.value || 'Delhi';
+  localStorage.setItem('jansetu_voter_phone', ph);
+  updateVoterUI();
+  showToast('✅ Verified! You can now vote.','info');
+  loadIssues();
+}
+function clearVoter() {
+  voterPhone=''; localStorage.removeItem('jansetu_voter_phone');
+  updateVoterUI(); loadIssues();
+}
+function updateVoterUI() {
+  const gate = document.getElementById('main-phone-gate');
+  const bar = document.getElementById('voter-verified-bar');
+  if (voterPhone) {
+    if(gate) gate.style.display='none';
+    if(bar) { bar.style.display='flex'; document.getElementById('voter-display').textContent = voterPhone.replace(/(\d{2})\d{6}(\d{2})/,'$1XXXXXX$2'); }
+  } else {
+    if(gate) gate.style.display='block';
+    if(bar) bar.style.display='none';
+  }
+}
+
+// Load issues
+async function loadIssues() {
+  const city = document.getElementById('v-city-f')?.value||'';
+  const cat  = document.getElementById('v-cat-f')?.value||'';
+  const sort = document.getElementById('v-sort-f')?.value||'votes';
+  const grid = document.getElementById('issues-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="loading-msg">⏳ Loading issues...</div>';
+  let issues;
+  try {
+    let url = API+'/issues?limit=30&sort='+sort;
+    if (city) url += '&city='+encodeURIComponent(city);
+    if (cat)  url += '&category='+encodeURIComponent(cat);
+    issues = await (await fetch(url)).json();
+    if (!Array.isArray(issues) || !issues.length) issues = DEMO_ISSUES;
+  } catch(e) { issues = DEMO_ISSUES; }
+  if (!issues.length) { grid.innerHTML='<div class="loading-msg">No issues found. Be the first to report!</div>'; return; }
+  const maxVotes = Math.max(...issues.map(i=>i.votes||0),1);
+  grid.innerHTML = issues.map(issue => renderIssueCard(issue, maxVotes)).join('');
+}
+
+function renderIssueCard(issue, maxVotes) {
+  const voted = votedIssues.includes(issue.id);
+  const cities = (issue.upvote_cities||[]).slice(0,4);
+  const pct = Math.round(((issue.votes||0)/maxVotes)*100);
+  return `
+  <div class="issue-card ${voted?'voted-card':''}" id="icard-${issue.id}">
+    <div class="issue-top">
+      <div class="issue-meta">
+        <div class="issue-cat">${issue.category}</div>
+        <div class="issue-title" onclick="openIssueDetail('${issue.id}')">${issue.title}</div>
+      </div>
+      <button class="vote-btn ${voted?'voted':''}" onclick="castVote('${issue.id}',${voted})" title="${voted?'Remove vote':'Upvote this issue'}">
+        <div class="vote-icon">${voted?'✅':'▲'}</div>
+        <div class="vote-count" id="vc-${issue.id}">${(issue.votes||0).toLocaleString('en-IN')}</div>
+        <div class="vote-lbl">${voted?'Voted':'Vote'}</div>
+      </button>
+    </div>
+    <div class="issue-desc">${issue.description}</div>
+    <div class="issue-footer">
+      <div class="issue-location">📍 ${issue.city}, ${issue.state}</div>
+      <div class="city-chips">${cities.map(c=>`<span class="city-chip">${c}</span>`).join('')}${(issue.upvote_cities||[]).length>4?`<span class="city-chip">+${(issue.upvote_cities||[]).length-4}</span>`:''}</div>
+    </div>
+    <div class="vote-progress-bar">
+      <div class="vpb-label"><span>National support</span><span>${pct}% of top issue</span></div>
+      <div class="vpb-track"><div class="vpb-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem">
+      <span class="badge badge-${issue.status}">${issue.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span>
+      <span style="font-size:.73rem;color:var(--muted)">${new Date(issue.created_at).toLocaleDateString('en-IN')} · ${(issue.comments||[]).length} comments</span>
+    </div>
+  </div>`;
+}
+
+async function castVote(issueId, alreadyVoted) {
+  if (!voterPhone) {
+    document.getElementById('main-phone-gate').style.display='block';
+    document.getElementById('main-phone-gate').scrollIntoView({behavior:'smooth'});
+    showToast('Please verify your mobile to vote','info');
+    return;
+  }
+  const city = document.getElementById('v-city-f')?.value || voterCity || 'Delhi';
+  const btn = document.querySelector(`#icard-${issueId} .vote-btn`);
+  if (btn) { btn.disabled=true; btn.style.opacity='.6'; }
+  try {
+    const method = alreadyVoted ? 'DELETE' : 'POST';
+    const res = await fetch(API+'/issues/'+issueId+'/vote', {
+      method, headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({voter_phone: voterPhone, city})
+    });
+    const data = await res.json();
+    if (res.ok || res.status===409) {
+      if (alreadyVoted) {
+        votedIssues = votedIssues.filter(id=>id!==issueId);
+        showToast('Vote removed.','info');
+      } else {
+        votedIssues.push(issueId);
+        showToast('🗳️ Vote cast! Thank you for participating.','success');
+      }
+      localStorage.setItem('jansetu_voted', JSON.stringify(votedIssues));
+    }
+  } catch(e) {
+    // Demo: toggle locally
+    if (alreadyVoted) {
+      votedIssues = votedIssues.filter(id=>id!==issueId);
+    } else {
+      votedIssues.push(issueId);
+      showToast('🗳️ [Demo] Vote cast!','success');
+    }
+    localStorage.setItem('jansetu_voted', JSON.stringify(votedIssues));
+  } finally {
+    if (btn) { btn.disabled=false; btn.style.opacity='1'; }
+    loadIssues();
+    loadLeaderboard();
+  }
+}
+
+async function loadLeaderboard() {
+  const container = document.getElementById('lb-items');
+  if (!container) return;
+  let issues;
+  try {
+    issues = await (await fetch(API+'/issues/trending/national?limit=8')).json();
+    if (!Array.isArray(issues) || !issues.length) issues = [...DEMO_ISSUES].sort((a,b)=>b.votes-a.votes).slice(0,8);
+  } catch(e) { issues = [...DEMO_ISSUES].sort((a,b)=>b.votes-a.votes).slice(0,8); }
+  const ranks = ['🥇','🥈','🥉'];
+  const rankClass = ['gold','silver','bronze'];
+  container.innerHTML = issues.map((issue,i)=>`
+    <div class="lb-item" onclick="openIssueDetail('${issue.id}')">
+      <div class="lb-rank ${rankClass[i]||'other'}">${ranks[i]||i+1}</div>
+      <div class="lb-info">
+        <div class="lb-title">${issue.title.length>52?issue.title.slice(0,52)+'…':issue.title}</div>
+        <div class="lb-city">📍 ${issue.city} · ${issue.category}</div>
+      </div>
+      <div class="lb-votes">▲ ${(issue.votes||0).toLocaleString('en-IN')}</div>
+    </div>`).join('');
+}
+
+async function loadCityStats() {
+  const container = document.getElementById('city-activity');
+  if (!container) return;
+  let cities;
+  try {
+    cities = await (await fetch(API+'/issues/stats/cities')).json();
+    if (!Array.isArray(cities) || !cities.length) cities = DEMO_CITY_STATS;
+  } catch(e) { cities = DEMO_CITY_STATS; }
+  container.innerHTML = cities.slice(0,6).map(c=>`
+    <div class="city-card" style="margin-bottom:.7rem">
+      <div class="city-name">${c.city}</div>
+      <div class="city-state">${c.state}</div>
+      <div class="city-nums">
+        <div class="city-num"><div class="city-num-val">${c.issues}</div><div class="city-num-lbl">Issues</div></div>
+        <div class="city-num"><div class="city-num-val">${c.total_votes.toLocaleString('en-IN')}</div><div class="city-num-lbl">Votes</div></div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadVoteStats() {
+  let issues;
+  try {
+    issues = await (await fetch(API+'/issues?limit=100')).json();
+    if (!Array.isArray(issues)) issues = DEMO_ISSUES;
+  } catch(e) { issues = DEMO_ISSUES; }
+  const totalVotes = issues.reduce((a,b)=>a+(b.votes||0),0);
+  const cities = new Set(issues.flatMap(i=>i.upvote_cities||[])).size;
+  const addressed = issues.filter(i=>i.status==='addressed').length;
+  document.getElementById('vs-issues').textContent = issues.length;
+  document.getElementById('vs-votes').textContent = totalVotes.toLocaleString('en-IN');
+  document.getElementById('vs-cities').textContent = cities||DEMO_CITY_STATS.length;
+  document.getElementById('vs-addressed').textContent = addressed;
+}
+
+// New issue modal
+function openNewIssueModal() { openModal('modal-new-issue'); }
+async function submitNewIssue() {
+  const title = document.getElementById('ni-title').value.trim();
+  const cat   = document.getElementById('ni-cat').value;
+  const city  = document.getElementById('ni-city').value;
+  const state = document.getElementById('ni-state').value;
+  const name  = document.getElementById('ni-name').value.trim()||'Anonymous';
+  const desc  = document.getElementById('ni-desc').value.trim();
+  if (!title||!cat||!city||!state||!desc) { showToast('Fill all required fields','error'); return; }
+  const btn = document.getElementById('ni-submit-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Submitting...';
+  try {
+    const res = await fetch(API+'/issues',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,category:cat,city,state,reported_by:name,description:desc})});
+    const data = await res.json();
+    if (res.ok) showToast('✅ Issue submitted! ID: '+data.issue_id,'success');
+    else showToast('Error: '+(data.detail||'Failed'),'error');
+  } catch(e) {
+    showToast('✅ [Demo] Issue submitted!','success');
+  } finally {
+    btn.disabled=false; btn.innerHTML='Submit Issue →';
+    closeModal('modal-new-issue');
+    ['ni-title','ni-desc','ni-name'].forEach(id=>document.getElementById(id).value='');
+    ['ni-cat','ni-city','ni-state'].forEach(id=>document.getElementById(id).selectedIndex=0);
+    loadIssues(); loadLeaderboard();
+  }
+}
+
+function autoFetchLocation(event) {
+  event.preventDefault();
+  if (!navigator.geolocation) {
+    showToast('Location access is not supported by your browser.','error');
+    return;
+  }
+  const allowed = confirm('Allow Jan Setu to access your device location? This will auto-fill your city and state.');
+  if (!allowed) {
+    showToast('Location access was not allowed. You can select location manually.','info');
+    return;
+  }
+  showToast('Please allow location access in your browser pop-up.','info');
+  navigator.geolocation.getCurrentPosition(async position => {
+    const {latitude, longitude} = position.coords;
+    const match = findNearestSupportedCity(latitude, longitude);
+    if (!match) {
+      showToast('Location detected, but your city is outside the supported service area. Please choose manually.','error');
+      return;
+    }
+    document.getElementById('ni-city').value = match.city;
+    document.getElementById('ni-state').value = match.state;
+    showToast(`Location auto-filled: ${match.city}, ${match.state}`,'success');
+  }, error => {
+    if (error.code === error.PERMISSION_DENIED) {
+      showToast('Location permission denied. Please allow location access to auto-fill.', 'error');
+    } else {
+      showToast('Unable to fetch location. Try again or set city/state manually.','error');
+    }
+  }, {enableHighAccuracy: false, timeout: 15000, maximumAge: 60000});
+}
+
+const SUPPORTED_LOCATION_CENTERS = [
+  {city:'Delhi',state:'Delhi',lat:28.7041,lon:77.1025},
+  {city:'Mumbai',state:'Maharashtra',lat:19.0760,lon:72.8777},
+  {city:'Bengaluru',state:'Karnataka',lat:12.9716,lon:77.5946},
+  {city:'Chennai',state:'Tamil Nadu',lat:13.0827,lon:80.2707},
+  {city:'Hyderabad',state:'Telangana',lat:17.3850,lon:78.4867},
+  {city:'Kolkata',state:'West Bengal',lat:22.5726,lon:88.3639},
+  {city:'Pune',state:'Maharashtra',lat:18.5204,lon:73.8567},
+  {city:'Ahmedabad',state:'Gujarat',lat:23.0225,lon:72.5714},
+  {city:'Jaipur',state:'Rajasthan',lat:26.9124,lon:75.7873},
+  {city:'Lucknow',state:'Uttar Pradesh',lat:26.8467,lon:80.9462},
+  {city:'Surat',state:'Gujarat',lat:21.1702,lon:72.8311},
+  {city:'Patna',state:'Bihar',lat:25.5941,lon:85.1376}
+];
+
+function findNearestSupportedCity(lat, lon) {
+  let best = null;
+  let bestDistance = Infinity;
+  for (const location of SUPPORTED_LOCATION_CENTERS) {
+    const d = getDistanceInKm(lat, lon, location.lat, location.lon);
+    if (d < bestDistance) {
+      bestDistance = d;
+      best = location;
+    }
+  }
+  // If within about 120km of a supported city, we accept it
+  return bestDistance <= 120 ? best : null;
+}
+
+function getDistanceInKm(lat1, lon1, lat2, lon2) {
+  const toRad = value => value * Math.PI / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Issue detail modal
+async function openIssueDetail(issueId) {
+  currentDetailIssueId = issueId;
+  let issue;
+  try {
+    issue = await (await fetch(API+'/issues/'+issueId)).json();
+    if (!issue.id) throw new Error('Not found');
+  } catch(e) { issue = DEMO_ISSUES.find(i=>i.id===issueId)||DEMO_ISSUES[0]; }
+  document.getElementById('detail-title').textContent = issue.title;
+  document.getElementById('detail-meta').textContent = `📍 ${issue.city}, ${issue.state} · ${issue.category} · Reported by ${issue.reported_by}`;
+  document.getElementById('detail-badge-row').innerHTML = `<span class="badge badge-${issue.status}">${issue.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span> <span style="margin-left:.7rem;font-weight:700;color:var(--vote)">▲ ${(issue.votes||0).toLocaleString('en-IN')} votes</span>`;
+  document.getElementById('detail-desc').textContent = issue.description;
+  // City breakdown
+  const cv = issue.city_votes || {};
+  const sorted = Object.entries(cv).sort((a,b)=>b[1]-a[1]);
+  const maxV = sorted[0]?.[1]||1;
+  document.getElementById('detail-city-votes').innerHTML = sorted.length ? `
+    <strong style="font-size:.85rem;color:var(--navy);font-weight:700">🗺️ Votes by City</strong>
+    ${sorted.map(([city,cnt])=>`
+      <div style="margin-top:.6rem">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.25rem">
+          <span style="font-weight:600">${city}</span><span style="color:var(--vote);font-weight:700">${cnt} votes</span>
+        </div>
+        <div class="vpb-track"><div class="vpb-fill" style="width:${Math.round(cnt/maxV*100)}%"></div></div>
+      </div>`).join('')}` : '';
+  // Comments
+  const comments = issue.comments || [];
+  document.getElementById('detail-comments').innerHTML = comments.length ? comments.map(c=>`
+    <div class="comment-item">
+      <div class="comment-avatar">${c.author[0]||'?'}</div>
+      <div class="comment-body">
+        <div><span class="comment-author">${c.author}</span><span class="comment-city">· ${c.city||''}</span></div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-time">${new Date(c.timestamp).toLocaleDateString('en-IN')}</div>
+      </div>
+    </div>`).join('') : '<p style="color:var(--muted);font-size:.88rem">No comments yet. Share your experience!</p>';
+  openModal('modal-issue-detail');
+}
+
+async function postComment() {
+  const author = document.getElementById('comment-author').value.trim()||'Anonymous';
+  const text   = document.getElementById('comment-text').value.trim();
+  const city   = document.getElementById('v-city-f')?.value||voterCity||'India';
+  if (!text) { showToast('Enter a comment','error'); return; }
+  try {
+    await fetch(API+'/issues/'+currentDetailIssueId+'/comments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({author,text,city})});
+    showToast('Comment posted!','success');
+  } catch(e) { showToast('[Demo] Comment posted!','success'); }
+  document.getElementById('comment-text').value='';
+  openIssueDetail(currentDetailIssueId);
+}
+
+// ── FAQs ───────────────────────────────────────────────────────────────────
+const faqs = [
+  {q:'What is Jan Setu?',a:'Jan Setu is an official digital platform for Indian citizens to register complaints, track resolutions, and vote on common issues affecting cities across India.'},
+  {q:'How does the voting system work?',a:'Citizens browse city-wide issues — potholes, power cuts, water shortages — and upvote problems they face in their own city. High-vote issues rise to the top, signalling to the government which problems are most widespread.'},
+  {q:'Is my vote anonymous?',a:'Yes. Your mobile number is hashed (one-way encrypted) before storage. No one can reverse-engineer your identity from your vote. Only vote counts and city names are publicly visible.'},
+  {q:'Can I vote from multiple cities?',a:'Each mobile number gets one vote per issue. You vote from your registered city, which adds your city\'s name to the issue\'s supporters list.'},
+  {q:'How do I file a grievance?',a:'Click "File Grievance" in the navigation bar, fill in your details and description, and submit. You\'ll receive a unique Tracking ID by email and SMS.'},
+  {q:'How long does resolution take?',a:'Most grievances are resolved within 30 working days. Urgent safety issues are prioritised and typically handled within 7 days.'},
+  {q:'What happens after voting?',a:'Highly-voted issues are automatically flagged in the admin dashboard and are escalated to the relevant department with full vote data and city breakdown reports.'},
+  {q:'Can I attach documents?',a:'Yes — PDF, JPG, or PNG files up to 5MB can be attached to grievances as supporting evidence.'},
+];
+function initFAQs() {
+  document.getElementById('faq-list').innerHTML = faqs.map((f,i)=>`
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(${i})" id="fq-${i}"><span>${f.q}</span><span class="arr">▼</span></div>
+      <div class="faq-a" id="fa-${i}">${f.a}</div>
+    </div>`).join('');
+}
+function toggleFaq(i) {
+  document.getElementById('fq-'+i).classList.toggle('open');
+  document.getElementById('fa-'+i).classList.toggle('open');
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────
+function adminLogin() {
+  const t = document.getElementById('admin-token').value;
+  if (!t) { showToast('Enter token','error'); return; }
+  adminToken = t;
+  document.getElementById('admin-login-screen').style.display='none';
+  document.getElementById('admin-dashboard').style.display='block';
+  adminLoadCases(); adminLoadIssues();
+}
+function adminLogout() {
+  adminToken='';
+  document.getElementById('admin-login-screen').style.display='block';
+  document.getElementById('admin-dashboard').style.display='none';
+  document.getElementById('admin-token').value='';
+}
+function adminSwitchTab(name) {
+  ['grievances','issues'].forEach(t=>{
+    document.getElementById('atab-'+t).classList.remove('active');
+    document.getElementById('apanel-'+t).classList.remove('active');
+  });
+  document.getElementById('atab-'+name).classList.add('active');
+  document.getElementById('apanel-'+name).classList.add('active');
+}
+async function adminLoadCases() {
+  const status = document.getElementById('admin-status-f')?.value||'';
+  const dept   = document.getElementById('admin-dept-f')?.value||'';
+  let url = API+'/admin/grievances?limit=50';
+  if (status) url += '&status='+status;
+  if (dept) url += '&department='+encodeURIComponent(dept);
+  try {
+    const data = await (await fetch(url,{headers:{'x-admin-token':adminToken}})).json();
+    if (data.detail) { showToast('Auth failed','error'); adminLogout(); return; }
+    document.getElementById('as-total').textContent = data.length;
+    document.getElementById('as-pending').textContent = data.filter(g=>g.status==='pending').length;
+    document.getElementById('as-progress').textContent = data.filter(g=>['in_progress','assigned'].includes(g.status)).length;
+    document.getElementById('as-resolved').textContent = data.filter(g=>g.status==='resolved').length;
+    const tbody = document.getElementById('admin-tbody');
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No grievances found.</td></tr>'; return; }
+    tbody.innerHTML = data.map(g=>`
+      <tr style="border-bottom:1px solid var(--border);font-size:.86rem">
+        <td style="padding:.85rem 1rem;font-weight:700;color:var(--accent);white-space:nowrap">${g.id}</td>
+        <td style="padding:.85rem 1rem;max-width:210px"><div style="font-weight:600;line-height:1.3">${g.title}</div><div style="color:var(--muted);font-size:.76rem">${g.category}</div></td>
+        <td style="padding:.85rem 1rem;white-space:nowrap">${g.department}</td>
+        <td style="padding:.85rem 1rem"><div>${g.name}</div><div style="color:var(--muted);font-size:.76rem">${g.state}</div></td>
+        <td style="padding:.85rem 1rem;white-space:nowrap;color:var(--muted)">${new Date(g.created_at).toLocaleDateString('en-IN')}</td>
+        <td style="padding:.85rem 1rem"><span class="badge badge-${g.status}">${g.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+        <td style="padding:.85rem 1rem;white-space:nowrap">
+          <button onclick="openGrievanceUpdateModal('${g.id}')" style="background:var(--navy);color:#fff;border:none;padding:.38rem .85rem;border-radius:7px;cursor:pointer;font-size:.78rem;font-weight:700;font-family:'DM Sans',sans-serif;margin-right:.35rem">Update</button>
+          <button onclick="deleteGrievance('${g.id}')" style="background:#fff;color:var(--danger);border:1.5px solid var(--danger);padding:.38rem .85rem;border-radius:7px;cursor:pointer;font-size:.78rem;font-weight:700;font-family:'DM Sans',sans-serif">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('admin-tbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Backend offline.</td></tr>'; }
+}
+async function adminLoadIssues() {
+  try {
+    const data = await (await fetch(API+'/admin/grievances?limit=1',{headers:{'x-admin-token':adminToken}})).json(); // Just to check auth
+  } catch(e) {}
+  // Load issues (public endpoint for now)
+  let issues;
+  try {
+    issues = await (await fetch(API+'/issues?limit=50&sort=votes')).json();
+    if (!Array.isArray(issues)) issues = DEMO_ISSUES;
+  } catch(e) { issues = DEMO_ISSUES; }
+  document.getElementById('ai-total').textContent = issues.length;
+  document.getElementById('ai-addressed').textContent = issues.filter(i=>i.status==='addressed').length;
+  document.getElementById('ai-votes').textContent = issues.reduce((a,b)=>a+(b.votes||0),0).toLocaleString('en-IN');
+  const tbody = document.getElementById('admin-issues-tbody');
+  if (!issues.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No issues found.</td></tr>'; return; }
+  tbody.innerHTML = issues.map(issue=>`
+    <tr style="border-bottom:1px solid var(--border);font-size:.86rem">
+      <td style="padding:.85rem 1rem;font-weight:700;color:#7c3aed;white-space:nowrap;font-size:.78rem">${issue.id}</td>
+      <td style="padding:.85rem 1rem;max-width:220px"><div style="font-weight:600;line-height:1.3">${issue.title}</div><div style="color:var(--muted);font-size:.75rem">${issue.category}</div></td>
+      <td style="padding:.85rem 1rem;white-space:nowrap">${issue.city}, ${issue.state}</td>
+      <td style="padding:.85rem 1rem;font-weight:700;color:var(--vote)">▲ ${(issue.votes||0).toLocaleString('en-IN')}</td>
+      <td style="padding:.85rem 1rem"><div style="display:flex;gap:.3rem;flex-wrap:wrap">${(issue.upvote_cities||[]).slice(0,3).map(c=>`<span class="city-chip">${c}</span>`).join('')}${(issue.upvote_cities||[]).length>3?`<span class="city-chip">+${(issue.upvote_cities||[]).length-3}</span>`:''}</div></td>
+      <td style="padding:.85rem 1rem"><span class="badge badge-${issue.status}">${issue.status.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+      <td style="padding:.85rem 1rem;white-space:nowrap">
+        <button onclick="openIssueUpdateModal('${issue.id}')" style="background:var(--vote);color:#fff;border:none;padding:.38rem .85rem;border-radius:7px;cursor:pointer;font-size:.78rem;font-weight:700;font-family:'DM Sans',sans-serif;margin-right:.35rem">Update</button>
+        <button onclick="deleteIssue('${issue.id}')" style="background:#fff;color:var(--danger);border:1.5px solid var(--danger);padding:.38rem .85rem;border-radius:7px;cursor:pointer;font-size:.78rem;font-weight:700;font-family:'DM Sans',sans-serif">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+function openGrievanceUpdateModal(gid) {
+  currentGrievanceId = gid;
+  document.getElementById('modal-gid-label').textContent = 'Updating: '+gid;
+  openModal('modal-status');
+}
+async function submitStatusUpdate() {
+  const status   = document.getElementById('modal-status-sel').value;
+  const officer  = document.getElementById('modal-officer').value;
+  const remark   = document.getElementById('modal-remark').value;
+  try {
+    const res = await fetch(API+'/admin/grievances/'+currentGrievanceId+'/status',{method:'PATCH',headers:{'Content-Type':'application/json','x-admin-token':adminToken},body:JSON.stringify({status,officer_name:officer,remark})});
+    const d = await res.json();
+    if (res.ok) showToast('✅ Updated & citizen notified!','success');
+    else showToast('Error: '+(d.detail||'Failed'),'error');
+  } catch(e) { showToast('[Demo] Status updated!','success'); }
+  closeModal('modal-status'); adminLoadCases();
+}
+async function deleteGrievance(gid) {
+  if (!confirm('Delete '+gid+'? Cannot be undone.')) return;
+  try { await fetch(API+'/admin/grievances/'+gid,{method:'DELETE',headers:{'x-admin-token':adminToken}}); } catch(e) {}
+  showToast('Deleted: '+gid,'success'); adminLoadCases();
+}
+function openIssueUpdateModal(iid) {
+  currentIssueAdminId = iid;
+  document.getElementById('modal-issue-id-label').textContent = 'Updating: '+iid;
+  openModal('modal-issue-status');
+}
+async function submitIssueStatusUpdate() {
+  const status = document.getElementById('modal-issue-status-sel').value;
+  try {
+    await fetch(API+'/admin/issues/'+currentIssueAdminId+'/status',{method:'PATCH',headers:{'Content-Type':'application/json','x-admin-token':adminToken},body:JSON.stringify({status})});
+    showToast('Issue status updated!','success');
+  } catch(e) { showToast('[Demo] Issue updated!','success'); }
+  closeModal('modal-issue-status'); adminLoadIssues();
+}
+async function deleteIssue(iid) {
+  if (!confirm('Delete issue '+iid+'?')) return;
+  try { await fetch(API+'/admin/issues/'+iid,{method:'DELETE',headers:{'x-admin-token':adminToken}}); } catch(e) {}
+  showToast('Deleted','success'); adminLoadIssues();
+}
+
+// ── MODALS ─────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── CHATBOT ─────────────────────────────────────────────────────────────────
+function toggleChat() {
+  const modal = document.getElementById('chat-modal');
+  modal.classList.toggle('open');
+  if (modal.classList.contains('open')) {
+    setTimeout(()=>document.getElementById('chat-input').focus(), 100);
+  }
+}
+
+function renderChatMessage(content, sender='bot') {
+  const body = document.getElementById('chat-body');
+  if (!body) return;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'chat-message ' + sender;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.textContent = content;
+  wrapper.appendChild(bubble);
+  if (body.querySelector('.chat-empty')) {
+    body.innerHTML = '';
+  }
+  body.appendChild(wrapper);
+  body.scrollTop = body.scrollHeight;
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  const message = input.value.trim();
+  if (!message) { showToast('Please type a question for Setu Aarya.','error'); return; }
+  renderChatMessage(message, 'user');
+  input.value = '';
+  renderChatMessage('Thinking...','bot');
+  const body = document.getElementById('chat-body');
+  body.scrollTop = body.scrollHeight;
+
+  try {
+    const res = await fetch(API + '/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message})
+    });
+    const data = await res.json();
+    if (res.ok && data.reply) {
+      // Remove temporary 'Thinking...' bubble before appending answer
+      const pending = body.querySelector('.chat-message.bot:last-child .chat-bubble');
+      if (pending && pending.textContent === 'Thinking...') pending.textContent = data.reply;
+      else renderChatMessage(data.reply, 'bot');
+    } else {
+      const errorText = data.detail || 'Setu Aarya could not answer right now.';
+      renderChatMessage(errorText, 'bot');
+    }
+  } catch (error) {
+    renderChatMessage('Unable to reach Setu Aarya. Please try again later.', 'bot');
+  }
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),4200);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadStats(); initFAQs();
+  document.getElementById('track-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')trackGrievance();});
+  document.getElementById('voter-phone')?.addEventListener('keydown',e=>{if(e.key==='Enter')setVoterPhone();});
+  if (voterPhone) updateVoterUI();
+});
+</script>
+</body>
+</html>
