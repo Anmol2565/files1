@@ -16,6 +16,7 @@ classifiers = [
     "Framework :: FastAPI",
     "License :: OSI Approved :: MIT License"
 ]
+package-mode = false
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
