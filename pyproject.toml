@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -14,9 +14,9 @@ keywords = ["fastapi", "firebase", "sqlite", "twilio", "openai"]
 classifiers = [
     "Programming Language :: Python :: 3.11",
     "Framework :: FastAPI",
-    "License :: OSI Approved :: MIT License"
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Web Environment"
 ]
-package-mode = false
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
@@ -25,3 +25,6 @@ dependencies = [
     "twilio",
     "openai"
 ]
+
+[tool.setuptools]
+packages = []
