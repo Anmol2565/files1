@@ -7,7 +7,11 @@ FastAPI backend for the Jan Setu Grievance Portal.
 1. Create a `.env` file with required environment variables.
 2. Install dependencies:
    ```bash
+   # Option 1: Using requirements.txt
    pip install -r requirements.txt
+
+   # Option 2: Using pyproject.toml (without installing project as package)
+   pip install -e . --no-root
    ```
 3. Run the app:
    ```bash
