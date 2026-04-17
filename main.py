@@ -210,7 +210,6 @@ def init_db():
         address TEXT,
         pincode TEXT,
         status TEXT DEFAULT 'pending',
-        created_at TEXT,
         updated_at TEXT,
         officer_name TEXT,
         timeline TEXT,
@@ -230,7 +229,6 @@ def init_db():
         voters TEXT,  -- JSON list of hashed phones
         city_votes TEXT,  -- JSON dict
         comments TEXT,  -- JSON list
-        created_at TEXT,
         updated_at TEXT,
         status TEXT DEFAULT 'open',
         upvote_cities TEXT  -- JSON list
@@ -248,11 +246,11 @@ def insert_grievance(data):
     conn = get_db()
     c = conn.cursor()
     c.execute('''INSERT INTO grievances 
-        (id, name, phone, email, state, department, category, title, description, address, pincode, status, created_at, updated_at, timeline, remarks)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        (id, name, phone, email, state, department, category, title, description, address, pincode, status, updated_at, timeline, remarks)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
         (data['id'], data['name'], data['phone'], data['email'], data['state'], data['department'], data['category'], 
          data['title'], data['description'], data.get('address'), data.get('pincode'), data['status'], 
-         data['created_at'], data['updated_at'], json.dumps(data['timeline']), json.dumps(data['remarks'])))
+         data['updated_at'], json.dumps(data['timeline']), json.dumps(data['remarks'])))
     conn.commit()
     conn.close()
 
@@ -266,8 +264,8 @@ def get_grievance_db(gid):
         return {
             'id': row[0], 'name': row[1], 'phone': row[2], 'email': row[3], 'state': row[4], 'department': row[5],
             'category': row[6], 'title': row[7], 'description': row[8], 'address': row[9], 'pincode': row[10],
-            'status': row[11], 'created_at': row[12], 'updated_at': row[13], 'officer_name': row[14],
-            'timeline': json.loads(row[15] or '[]'), 'remarks': json.loads(row[16] or '[]')
+            'status': row[11], 'updated_at': row[12], 'officer_name': row[13],
+            'timeline': json.loads(row[14] or '[]'), 'remarks': json.loads(row[15] or '[]')
         }
     return None
 
@@ -283,7 +281,7 @@ def update_grievance(gid, updates):
 def list_grievances_db(limit=18, department=None, status=None):
     conn = get_db()
     c = conn.cursor()
-    query = 'SELECT id, title, department, category, status, state, created_at FROM grievances WHERE 1=1'
+    query = 'SELECT id, title, department, category, status, state, updated_at FROM grievances WHERE 1=1'
     params = []
     if department:
         query += ' AND department = ?'
@@ -291,12 +289,12 @@ def list_grievances_db(limit=18, department=None, status=None):
     if status:
         query += ' AND status = ?'
         params.append(status)
-    query += ' ORDER BY created_at DESC LIMIT ?'
+    query += ' ORDER BY updated_at DESC LIMIT ?'
     params.append(limit)
     c.execute(query, params)
     rows = c.fetchall()
     conn.close()
-    return [{'id': r[0], 'title': r[1], 'department': r[2], 'category': r[3], 'status': r[4], 'state': r[5], 'created_at': r[6]} for r in rows]
+    return [{'id': r[0], 'title': r[1], 'department': r[2], 'category': r[3], 'status': r[4], 'state': r[5], 'updated_at': r[6]} for r in rows]
 
 def get_stats():
     conn = get_db()
@@ -323,11 +321,11 @@ def insert_issue(data):
     conn = get_db()
     c = conn.cursor()
     c.execute('''INSERT INTO city_issues 
-        (id, title, description, category, city, state, reported_by, phone, votes, voters, city_votes, comments, created_at, updated_at, status, upvote_cities)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        (id, title, description, category, city, state, reported_by, phone, votes, voters, city_votes, comments, updated_at, status, upvote_cities)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
         (data['id'], data['title'], data['description'], data['category'], data['city'], data['state'], 
          data['reported_by'], data.get('phone'), data['votes'], json.dumps(data['voters']), 
-         json.dumps(data['city_votes']), json.dumps(data['comments']), data['created_at'], 
+         json.dumps(data['city_votes']), json.dumps(data['comments']), 
          data['updated_at'], data['status'], json.dumps(data['upvote_cities'])))
     conn.commit()
     conn.close()
@@ -343,7 +341,7 @@ def get_issue_db(iid):
             'id': row[0], 'title': row[1], 'description': row[2], 'category': row[3], 'city': row[4], 'state': row[5],
             'reported_by': row[6], 'phone': row[7], 'votes': row[8], 'voters': json.loads(row[9] or '[]'),
             'city_votes': json.loads(row[10] or '{}'), 'comments': json.loads(row[11] or '[]'),
-            'created_at': row[12], 'updated_at': row[13], 'status': row[14], 'upvote_cities': json.loads(row[15] or '[]')
+            'updated_at': row[12], 'status': row[13], 'upvote_cities': json.loads(row[14] or '[]')
         }
     return None
 
@@ -432,7 +430,7 @@ def list_issues_db(city=None, state=None, category=None, sort='votes', limit=30)
         query += ' AND category = ?'
         params.append(category)
     if sort == 'recent':
-        query += ' ORDER BY created_at DESC'
+        query += ' ORDER BY updated_at DESC'
     else:
         query += ' ORDER BY votes DESC'
     query += ' LIMIT ?'
@@ -446,7 +444,7 @@ def list_issues_db(city=None, state=None, category=None, sort='votes', limit=30)
             'id': r[0], 'title': r[1], 'description': r[2], 'category': r[3], 'city': r[4], 'state': r[5],
             'reported_by': r[6], 'phone': r[7], 'votes': r[8], 'voters': json.loads(r[9] or '[]'),
             'city_votes': json.loads(r[10] or '{}'), 'comments': json.loads(r[11] or '[]'),
-            'created_at': r[12], 'updated_at': r[13], 'status': r[14], 'upvote_cities': json.loads(r[15] or '[]')
+            'updated_at': r[12], 'status': r[13], 'upvote_cities': json.loads(r[14] or '[]')
         }
         # Remove voters for public
         issue.pop('voters', None)
@@ -527,7 +525,7 @@ async def submit_grievance(data: GrievanceCreate):
     gid  = gen_id("GRV")
     now  = datetime.datetime.utcnow().isoformat()
     doc  = {**data.dict(), "id": gid, "status": "pending",
-            "created_at": now, "updated_at": now,
+            "updated_at": now,
             "timeline": [{"event": "Grievance Submitted", "timestamp": now, "by": "Citizen"}],
             "officer_name": None, "remarks": []}
     insert_grievance(doc)
@@ -585,7 +583,7 @@ async def admin_list(limit: int = 50, status: Optional[str] = None, department: 
     if department:
         query += ' AND department = ?'
         params.append(department)
-    query += ' ORDER BY created_at DESC LIMIT ?'
+    query += ' ORDER BY updated_at DESC LIMIT ?'
     params.append(limit)
     c.execute(query, params)
     rows = c.fetchall()
@@ -595,8 +593,8 @@ async def admin_list(limit: int = 50, status: Optional[str] = None, department: 
         g = {
             'id': r[0], 'name': r[1], 'phone': r[2], 'email': r[3], 'state': r[4], 'department': r[5],
             'category': r[6], 'title': r[7], 'description': r[8], 'address': r[9], 'pincode': r[10],
-            'status': r[11], 'created_at': r[12], 'updated_at': r[13], 'officer_name': r[14],
-            'timeline': json.loads(r[15] or '[]'), 'remarks': json.loads(r[16] or '[]')
+            'status': r[11], 'updated_at': r[12], 'officer_name': r[13],
+            'timeline': json.loads(r[14] or '[]'), 'remarks': json.loads(r[15] or '[]')
         }
         grievances.append(g)
     return grievances
@@ -628,7 +626,6 @@ async def create_issue(data: IssueCreate):
         "voters": [],         # list of hashed phone numbers (prevents double-vote)
         "city_votes": {},     # {"Delhi": 42, "Mumbai": 18, ...}  per-city breakdown
         "comments": [],
-        "created_at": now,
         "updated_at": now,
         "status": "open",     # open | acknowledged | in_review | addressed
         "upvote_cities": [],  # which cities have upvoted
@@ -705,7 +702,7 @@ async def trending_national(limit: int = 10):
             'id': r[0], 'title': r[1], 'description': r[2], 'category': r[3], 'city': r[4], 'state': r[5],
             'reported_by': r[6], 'phone': r[7], 'votes': r[8], 'voters': json.loads(r[9] or '[]'),
             'city_votes': json.loads(r[10] or '{}'), 'comments': json.loads(r[11] or '[]'),
-            'created_at': r[12], 'updated_at': r[13], 'status': r[14], 'upvote_cities': json.loads(r[15] or '[]')
+            'updated_at': r[12], 'status': r[13], 'upvote_cities': json.loads(r[14] or '[]')
         }
         issue.pop("voters", None)
         result.append(issue)
