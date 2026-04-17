@@ -380,10 +380,10 @@ footer{background:var(--navy);color:var(--muted);padding:2.2rem 1.5rem;border-to
 }
 
 /* ══ CHATBOT ══════════════════════════════════════════════════════════════ */
-.chat-launcher{position:fixed;bottom:1.5rem;right:1.5rem;z-index:5000}
+.chat-launcher{position:fixed;bottom:1.5rem;left:1.5rem;z-index:5000}
 .chat-launcher button{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:#fff;padding:.95rem 1.15rem;font-size:.95rem;font-weight:700;border-radius:999px;box-shadow:0 18px 36px rgba(124,58,237,.25);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
 .chat-launcher button:hover{transform:translateY(-1px);box-shadow:0 24px 44px rgba(124,58,237,.32)}
-.chat-modal{display:none;position:fixed;bottom:88px;right:1.5rem;width:min(420px,calc(100vw - 2rem));max-height:80vh;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 32px 90px rgba(15,23,42,.18);z-index:5001;flex-direction:column}
+.chat-modal{display:none;position:fixed;bottom:88px;left:1.5rem;width:min(420px,calc(100vw - 2rem));max-height:80vh;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 32px 90px rgba(15,23,42,.18);z-index:5001;flex-direction:column}
 .chat-modal.open{display:flex}
 .chat-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;background:#312e81;color:#fff}
 .chat-header h4{margin:0;font-size:1rem;letter-spacing:.02em}
@@ -885,9 +885,12 @@ footer{background:var(--navy);color:var(--muted);padding:2.2rem 1.5rem;border-to
       <h4>Setu Aarya</h4>
       <p>AI assistant for Jan Setu</p>
     </div>
-    <button class="modal-close" onclick="toggleChat()">✕</button>
+    <div style="display:flex;gap:8px;">
+      <button class="modal-close" onclick="clearChat()" title="Clear conversation">🗑️</button>
+      <button class="modal-close" onclick="toggleChat()">✕</button>
+    </div>
   </div>
-  <div class="chat-body" id="chat-body"><div class="chat-empty">Ask Setu Aarya anything about grievances, issue voting, or citizen services.</div></div>
+  <div class="chat-body" id="chat-body"><div class="chat-empty">Hello! I'm Setu Aarya, your AI assistant for Jan Setu. How can I help you today?</div></div>
   <div class="chat-input-row">
     <input id="chat-input" type="text" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChatMessage()" />
     <button onclick="sendChatMessage()">Send</button>
@@ -900,7 +903,7 @@ footer{background:var(--navy);color:var(--muted);padding:2.2rem 1.5rem;border-to
      JAVASCRIPT
 ════════════════════════════════════════════════════════════ -->
 <script>
-const API = 'https://your-jan-setu-backend.herokuapp.com/api';  // Replace with your deployed backend URL
+const API = 'http://localhost:8000/api';
 let adminToken = '';
 let currentGrievanceId = '';
 let currentIssueAdminId = '';
@@ -1572,12 +1575,34 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ── CHATBOT ─────────────────────────────────────────────────────────────────
+function getUserId() {
+  let uid = localStorage.getItem('jan_setu_user_id');
+  if (!uid) {
+    uid = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('jan_setu_user_id', uid);
+  }
+  return uid;
+}
+
 function toggleChat() {
   const modal = document.getElementById('chat-modal');
   modal.classList.toggle('open');
   if (modal.classList.contains('open')) {
     setTimeout(()=>document.getElementById('chat-input').focus(), 100);
   }
+}
+
+function clearChat() {
+  const body = document.getElementById('chat-body');
+  if (body) {
+    body.innerHTML = '<div class="chat-empty">Hello! I\'m Setu Aarya, your AI assistant for Jan Setu. How can I help you today?</div>';
+  }
+  // Clear conversation memory on backend
+  fetch(API + '/chat/clear', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({user_id: getUserId()})
+  }).catch(() => {}); // Ignore errors
 }
 
 function renderChatMessage(content, sender='bot') {
@@ -1611,14 +1636,14 @@ async function sendChatMessage() {
     const res = await fetch(API + '/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({message})
+      body: JSON.stringify({message, user_id: getUserId()})
     });
     const data = await res.json();
-    if (res.ok && data.reply) {
+    if (res.ok && data.response) {
       // Remove temporary 'Thinking...' bubble before appending answer
       const pending = body.querySelector('.chat-message.bot:last-child .chat-bubble');
-      if (pending && pending.textContent === 'Thinking...') pending.textContent = data.reply;
-      else renderChatMessage(data.reply, 'bot');
+      if (pending && pending.textContent === 'Thinking...') pending.textContent = data.response;
+      else renderChatMessage(data.response, 'bot');
     } else {
       const errorText = data.detail || 'Setu Aarya could not answer right now.';
       renderChatMessage(errorText, 'bot');
