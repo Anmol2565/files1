@@ -4,3 +4,4 @@ firebase-admin
 dotenv
 twilio
 openai
+gunicorn
