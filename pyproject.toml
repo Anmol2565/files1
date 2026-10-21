@@ -27,5 +27,6 @@ firebase-admin = "*"
 python-dotenv = "*"
 twilio = "*"
 openai = "*"
+requests = "*"
 
 [tool.poetry.dev-dependencies]

@@ -5,3 +5,4 @@ dotenv
 twilio
 openai
 gunicorn
+requests
